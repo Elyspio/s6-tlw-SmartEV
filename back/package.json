@@ -1,0 +1,29 @@
+{
+    "name": "ts-node-template",
+    "version": "1.0.0",
+    "description": "NodeJS with typescript support template",
+    "repository": "https://github.com/Elyspio/ts-node-template",
+    "author": "Jonathan Guichard",
+    "license": "MIT",
+    "private": false,
+    "devDependencies": {
+        "@types/node": "latest",
+        "tslint": "latest",
+        "typescript": "latest",
+        "prettier": "latest",
+        "nodemon": "latest",
+        "@babel/core": "latest",
+        "@babel/cli": "latest",
+        "@babel/preset-typescript": "latest",
+        "@babel/preset-env": "latest",
+        "@babel/plugin-proposal-class-properties": "7.5.5",
+        "@babel/plugin-proposal-object-rest-spread": "7.6.2",
+        "@types/express": "latest"
+    },
+    "dependencies": {
+        "express": "latest"
+    },
+    "scripts": {
+        "watch": "./watch.sh"
+    }
+}
