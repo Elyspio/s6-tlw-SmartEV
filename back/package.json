@@ -1,29 +1,29 @@
 {
     "name": "ts-node-template",
     "version": "1.0.0",
-    "description": "NodeJS with typescript support template",
-    "repository": "https://github.com/Elyspio/ts-node-template",
     "author": "Jonathan Guichard",
     "license": "MIT",
     "private": false,
     "devDependencies": {
-        "@types/node": "latest",
+        "@babel/cli": "latest",
+        "@babel/core": "latest",
+        "@babel/preset-env": "latest",
+        "@types/express": "^4.17.2",
+        "@types/node": "^13.7.1",
+        "@types/node-fetch": "^2.5.4",
+        "nodemon": "latest",
+        "prettier": "latest",
         "tslint": "latest",
         "typescript": "latest",
-        "prettier": "latest",
-        "nodemon": "latest",
-        "@babel/core": "latest",
-        "@babel/cli": "latest",
-        "@babel/preset-typescript": "latest",
-        "@babel/preset-env": "latest",
-        "@babel/plugin-proposal-class-properties": "7.5.5",
-        "@babel/plugin-proposal-object-rest-spread": "7.6.2",
-        "@types/express": "latest"
+        "pkg": "4.4.3"
     },
     "dependencies": {
-        "express": "latest"
+        "express": "latest",
+        "node-fetch": "^2.6.0"
     },
     "scripts": {
-        "watch": "./watch.sh"
+        "watch": "nodemon -e ts,json --watch ./src -x \"npm run build && node lib/app.js\"",
+        "build": "tsc && babel build --out-dir lib",
+        "dist": "npm run build && pkg ./lib/app.js --target node8-win-x64"
     }
 }

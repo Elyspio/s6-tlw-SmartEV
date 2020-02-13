@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "target": "esnext",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "ES5",
+    "moduleResolution": "Node",
     "sourceMap": true,
-    "outDir": "build"
+    "outDir": "build",
+    "allowSyntheticDefaultImports": true
   },
   "compileOnSave": true,
   "exclude": [
