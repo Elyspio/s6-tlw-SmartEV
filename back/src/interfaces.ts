@@ -1,20 +1,14 @@
-
 import {Request} from 'express'
+import {CarData} from "./Car";
 
-export interface Car {
-    name: string,
-    maxCharge: number,
-    range: number,
-    connectionTypeIds: string
-}
 
 export interface PoiQuery extends Request {
     query: {
         coordonates: {
-            topLeft: Coordonate,
-            bottomRight: Coordonate
+            southWest: Coordonate,
+            northEast: Coordonate,
         },
-        car: Car
+        car: string
     }
 }
 
@@ -22,7 +16,7 @@ export interface ItineraireQuery extends Request {
     query: {
         from: Coordonate,
         to: Coordonate
-        car: Car
+        car: CarData
     }
 }
 
