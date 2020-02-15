@@ -1,0 +1,12 @@
+.leaflet-container {
+  width: 100%;
+  height: 78vh;
+}
+.Map {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  margin: 2rem;
+}
+/*# sourceMappingURL=Map.css.map */
