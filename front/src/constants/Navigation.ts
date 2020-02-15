@@ -3,3 +3,5 @@ export const routes = {
     routes: "/routes",
     options: "/options"
 }
+
+export const init = routes.map;

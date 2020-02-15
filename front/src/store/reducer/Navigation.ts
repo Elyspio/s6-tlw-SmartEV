@@ -5,6 +5,7 @@ import {
     setCurrentLocation,
     setLocation
 } from "../action/Navigation";
+import {init} from "../../constants/Navigation";
 
 
 export interface State {
@@ -18,7 +19,7 @@ export interface State {
 
 
 const initialState: State = {
-    current: ["/"],
+    current: [init],
     history: {
         prev: [],
         post: [],

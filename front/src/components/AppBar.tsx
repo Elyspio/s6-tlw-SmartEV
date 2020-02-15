@@ -10,6 +10,7 @@ import {routes} from "../constants/Navigation";
 import {setCurrentLocation} from "../store/action/Navigation";
 import {Dispatch} from "redux";
 import {connect} from "react-redux";
+import {StoreState} from "../store/reducer";
 
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
@@ -20,6 +21,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     }
 }
 
+const mapStateToProps = (state: StoreState) => {
+    return {
+        location: state.router.current.join("/")
+    }
+};
 const styles = ((theme: Theme) => createStyles({
     root: {
         flexGrow: 1,
@@ -32,11 +38,14 @@ type DispatchProps = {
     changeLocation: (location: string) => void
 }
 
+type StateProps = {
+    location: string
+}
 
 type OwnProps = {
     classes: any
 }
-type Props = DispatchProps & OwnProps
+type Props = DispatchProps & OwnProps & StateProps
 
 type State = {
     current: string;
@@ -44,19 +53,8 @@ type State = {
 
 class NavBar extends React.Component<Props, State> {
 
-    public state = {
-        current: routes.map
-    };
-
-    constructor(props: Props) {
-        super(props);
-    }
-
     handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-        this.setState({
-            current: newValue
-        }, () => this.props.changeLocation(newValue));
-
+        this.props.changeLocation(newValue);
     };
 
     render() {
@@ -65,7 +63,7 @@ class NavBar extends React.Component<Props, State> {
             <div className={classes.root}>
                 <AppBar position="static" color="default">
                     <Tabs
-                        value={this.state?.current}
+                        value={this.props?.location}
                         onChange={this.handleChange}
                         variant="fullWidth"
                         indicatorColor="primary"
@@ -89,4 +87,5 @@ class NavBar extends React.Component<Props, State> {
     }
 }
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(NavBar))
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(NavBar))

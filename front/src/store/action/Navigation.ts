@@ -1,8 +1,7 @@
 import {createAction as _createAction, PrepareAction} from '@reduxjs/toolkit'
 import {baseApiPath, host, port, protocol} from '../../constants/Server';
 
-const createAction = <P>(name: string) => _createAction<P>(`api/${name}`);
-const createCustomAction = <P extends PrepareAction<any>, T extends string>(name: string, prepare: any) => _createAction<P>(`api/${name}`, prepare)
+const createAction = <P>(name: string) => _createAction<P>(`navigation/${name}`);
 
 export const setLocation = createAction<string>("setLocation");
 export const setCurrentLocation = createAction<string>("setCurrentLocation")
