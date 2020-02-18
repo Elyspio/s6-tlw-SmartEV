@@ -1,0 +1,41 @@
+#MenuContextMenu {
+  position: absolute !important;
+  z-index: 1000;
+  width: auto !important;
+  padding: .5rem  0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    svg {
+      margin-right: 1rem;
+    }
+    .context-menu-label {
+      display: flex;
+      margin: 0 1rem;
+      width: 8rem;
+    }
+    border-bottom: darkgrey 1px solid;
+    border-radius: 0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+
+  > * {
+    margin-bottom: 0.1rem;
+    padding-right: 0.1rem;
+    padding-left: 0.1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    cursor: pointer;
+  }
+
+}

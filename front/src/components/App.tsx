@@ -14,9 +14,7 @@ type StateProps = {
     location: string
 }
 
-
 type State = {}
-
 
 type DispatchProps = {
     getCars: Function,
@@ -34,7 +32,6 @@ class App extends React.Component<Props, State> {
     };
 
     componentDidMount(): void {
-        console.log(this.props);
         this.props.getCars();
         this.props.setDefaultCar();
     }
