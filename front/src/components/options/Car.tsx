@@ -1,31 +1,70 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import {Paper} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
 import {CarData} from '../../../../back/src/Car'
+import './Car.css'
+import {Dispatch} from "redux";
+import {setCar} from "../../store/action/Car";
+import {connect} from "react-redux";
+import {BatteryChargingFull, LocalGasStation, Done} from "@material-ui/icons";
 
 type StateProps = {}
-type DispatchProps = {}
 
-type Props = {
-    data: CarData
+type DispatchProps = {
+	setCurrentCar: Function
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+	return {
+		setCurrentCar: (id: string) => dispatch(setCar(id))
+	}
+}
+
+type Props = DispatchProps & {
+	data: CarData,
+	selected?: boolean
 }
 
 
-class Car extends Component<Props> {
-    private static Cars = {
-        zoe: "zoe",
-        tesla: "teslaModel3"
-    };
+class Car extends PureComponent<Props> {
+	private static Cars = {
+		zoe: "zoe",
+		teslaModel3: "teslaModel3"
+	};
 
-    render() {
-        return (
-            <Paper className={"Car"}>
-                <Typography variant={"subtitle1"}>{this.props.data.model}</Typography>
-                <p><span className="label">Autonomie :</span> <span>{this.props.data.range}</span></p>
-                <p><span className="label">Puissance maximale de charge :</span> <span>{this.props.data.maxPower}</span></p>
-            </Paper>
-        );
-    }
+	private static imagePaths = {
+		zoe: "/assets/cars/zoe.jpg",
+		teslaModel3: "/assets/cars/tesla.jpg"
+	}
+
+	render() {
+
+		const {id, maxPower, range, model} = this.props.data;
+
+		// @ts-ignore
+		const image = Car.imagePaths[id]
+		return (
+			<Paper className={"Car"}
+			       onClick={() => this.props.setCurrentCar(id as string)}>
+				{this.props.selected ? <p className={"selected-icon"}><Done /></p> : null}
+				<div className="grid">
+					<p className="header">{model}</p>
+					<img src={image} alt={model}/>
+					<div className={"attributes"}>
+						<p><LocalGasStation/>
+							<span className="label">Autonomie : </span>
+							<span>{range} km</span></p>
+						<p>
+							<BatteryChargingFull/>
+							<span
+								className="label">Puissance maximale de charge : </span>
+							<span>{maxPower} kWh</span></p>
+					</div>
+				</div>
+
+
+			</Paper>
+		);
+	}
 }
 
-export default Car;
+export default connect(null, mapDispatchToProps)(Car) as any;

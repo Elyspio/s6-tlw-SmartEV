@@ -106,3 +106,6 @@ dist
 back/build
 back/lib
 *.exe
+*.js
+*.css
+*.map

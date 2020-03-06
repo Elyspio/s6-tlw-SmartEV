@@ -1,14 +1,14 @@
 import {createReducer} from "@reduxjs/toolkit";
 
 import {addCar, setCar} from "../action/Car";
-import {init as initCar} from "../../constants/car";
+import {init as initCar} from "../../constants/Car";
 import {CarData} from "../../../../back/src/Car";
 
 
 export interface State {
-    current: string,
+    current?: string,
     cars: {
-        [key:string]: CarData
+        [key: string]: CarData
     }
 }
 
@@ -27,6 +27,7 @@ export const reducer = createReducer<State>(initialState, builder => {
     builder.addCase(setCar, (state, action) => {
         state.current = action.payload
     })
+
 
 });
 
