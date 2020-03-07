@@ -45,7 +45,8 @@ class Car extends PureComponent<Props> {
 		return (
 			<Paper className={"Car"}
 			       onClick={() => this.props.setCurrentCar(id as string)}>
-				{this.props.selected ? <p className={"selected-icon"}><Done /></p> : null}
+				<p className={"selected-icon"}>{this.props.selected ? <Done /> : ""}</p>
+
 				<div className="grid">
 					<p className="header">{model}</p>
 					<img src={image} alt={model}/>
