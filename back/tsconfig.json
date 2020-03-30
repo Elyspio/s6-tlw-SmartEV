@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
     "target": "ES5",
     "moduleResolution": "Node",
     "sourceMap": true,
     "outDir": "build",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "dom"]
   },
   "compileOnSave": true,
   "exclude": [
