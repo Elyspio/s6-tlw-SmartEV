@@ -2,7 +2,7 @@ import {createReducer} from "@reduxjs/toolkit";
 
 import {addCar, setCar} from "../action/Car";
 import {init as initCar} from "../../constants/Car";
-import {CarData} from "../../../../back/src/Car";
+import {CarData} from "../../../../back/src/interfaces/Car";
 
 
 export interface State {

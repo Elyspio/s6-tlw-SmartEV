@@ -1,7 +1,9 @@
+import {LatLngExpression} from "leaflet";
+
 export class Localisation {
     public static GEOLOCALITION_NOT_SUPPORTED = "Geolocation is not supported by this browser.";
 
-    public static getUserLocalisation(): Promise<Coordinates> {
+    public static getUserLocalisation(): Promise<LatLngExpression> {
         return new Promise((resolve, reject) => {
 
             if (!navigator.geolocation) {
@@ -9,7 +11,10 @@ export class Localisation {
             }
 
             navigator.geolocation.getCurrentPosition(
-                position => resolve(position.coords),
+                position => resolve({
+                    lng: position.coords.longitude,
+                    lat: position.coords.latitude
+                }),
                 positionError => reject(positionError),
                 {
                     enableHighAccuracy: true

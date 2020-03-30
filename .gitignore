@@ -105,7 +105,7 @@ dist
 .idea
 back/build
 back/lib
-*.exe
-*.js
-*.css
-*.map
+**/*.exe
+**/*.js
+**/*.css
+**/*.css.map

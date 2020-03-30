@@ -1,5 +1,5 @@
 import {createAction as _createAction, Dispatch} from '@reduxjs/toolkit'
-import {CarData} from "../../../../back/src/Car";
+import {CarData} from "../../../../back/src/interfaces/Car";
 import {Backend} from "../../services/backend";
 
 
@@ -9,8 +9,8 @@ export const addCar = createAction<CarData>("addCar");
 export const setCar = createAction<string | undefined>("setsCar");
 
 export function getCar(name: string) {
-	return (dispatch: Dispatch) => {
-		return Backend.getCar(name).then(data => dispatch(addCar(data)))
-	}
+    return (dispatch: Dispatch) => {
+        return Backend.getCar(name).then(data => dispatch(addCar(data)))
+    }
 }
 
