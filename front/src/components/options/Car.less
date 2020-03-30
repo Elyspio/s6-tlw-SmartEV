@@ -1,56 +1,56 @@
 .Car {
 
-	padding: 1rem;
-	margin-top: 1rem;
+  padding: 1rem;
+  margin-top: 1rem;
 
-	.grid {
-		justify-items: center;
-		display: grid;
-		grid-template-rows: 5vh 19vh 10vh;
+  .grid {
+    justify-items: center;
+    display: grid;
+    grid-template-rows: 5vh 19vh 10vh;
 
-		.label {
-			font-weight: bold;
-		}
+    .label {
+      font-weight: bold;
+    }
 
-		> .header {
-			font-size: large;
-			font-weight: bolder;
-			display: block;
-			margin-top: 1rem;
-		}
+    > .header {
+      font-size: large;
+      font-weight: bolder;
+      display: block;
+      margin-top: 1rem;
+    }
 
-		.attributes {
-			* > {
-				margin-bottom: 1rem;
-			}
-		}
-	}
+    .attributes {
+      * > {
+        margin-bottom: 1rem;
+      }
+    }
+  }
 
-	&:first-child {
-		margin-right: 1rem;
-	}
+  &:first-child {
+    margin-right: 1rem;
+  }
 
-	.selected-icon {
-		height: 24px;
-		color: darkgreen;
-		direction: rtl;
-	}
+  .selected-icon {
+    height: 24px;
+    color: darkgreen;
+    direction: rtl;
+  }
 
-	p {
-		display: grid;
-		grid-template-columns: 3rem 1fr 5rem;
-		grid-gap: 1rem;
-		margin: 0;
-		padding: 0;
-	}
+  p {
+    display: grid;
+    grid-template-columns: 3rem 1fr 5rem;
+    grid-gap: 1rem;
+    margin: 0;
+    padding: 0;
+  }
 
-	img {
-		width: 20rem;
-		height: 13rem;
-	}
+  img {
+    width: 20rem;
+    height: 13rem;
+  }
 
-	&:hover {
-		box-shadow: 0 14px 28px rgba(0, 0, 0, 0.20), 0 10px 10px rgba(0, 0, 0, 0.18);
-		cursor: pointer;
-	}
+  &:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.20), 0 10px 10px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+  }
 }
