@@ -1,20 +1,24 @@
 import React from 'react';
-import NavBar from "./AppBar";
 import {connect} from "react-redux";
-import {State as RouterState} from "../store/reducer/Navigation";
-import {routes} from "../constants/Navigation";
-import {Routes} from "./Routes";
-import CustomMap from "./map/Map";
 import './App.css'
 import {getCar, setCar} from "../store/action/Car";
-import {cars, init} from "../constants/car";
+import {cars, init} from "../constants/Car";
 import Options from "./options/Options";
+import CustomMap from "./map/Map";
+import {StoreState} from "../store/reducer";
+import {Backend} from "../services/backend";
+import * as Error from "./errors"
+import { ThemeProvider } from '@material-ui/core/styles';
+import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+import {Paper} from "@material-ui/core";
 
 type StateProps = {
     location: string
 }
 
-type State = {}
+type State = {
+    serverIsOk: boolean
+}
 
 type DispatchProps = {
     getCars: Function,
@@ -25,35 +29,53 @@ type Props = StateProps & DispatchProps;
 
 class App extends React.Component<Props, State> {
 
-    private components = {
-        [routes.map]: <CustomMap/>,
-        [routes.routes]: <Routes/>,
-        [routes.options]: <Options/>
-    };
 
-    componentDidMount(): void {
-        this.props.getCars();
-        this.props.setDefaultCar();
+    public state = {
+        serverIsOk: false
+    }
+
+    async componentDidMount() {
+        await this.checkServer();
+    }
+
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
+        if (this.state.serverIsOk) {
+            this.props.getCars();
+            this.props.setDefaultCar();
+        }
     }
 
     render() {
 
-        let content = this.components[this.props.location];
-        return (
-            <div className="App">
-                <NavBar/>
-                <div id={"content"}>
-                    {content}
-                </div>
+        const app = <>
+            <div id={"content"}>
+                <CustomMap/>
             </div>
+            <Options/>
+        </>
+
+
+        let error = <div id={"content"}>
+            {this.state.serverIsOk ? <CustomMap/> : <Error.ServerNotFound fn={this.checkServer} timer={1000}/>}
+        </div>;
+        return (
+
+
+            <Paper className="App">
+                {/*<ThemeProvider theme={theme}>*/}
+                    {this.state.serverIsOk ? app: error}
+                {/*</ThemeProvider>*/}
+            </Paper>
         );
+    }
+
+    private checkServer = async () => {
+        this.setState({serverIsOk: await Backend.ping()})
     }
 }
 
-const mapStateToProps = (state: { router: RouterState }) => {
-    return {
-        location: state.router.current.join("/")
-    }
+const mapStateToProps = (state: StoreState) => {
+    return {}
 };
 const mapDispatchToProps = (dispatch: Function) => {
     return {
@@ -65,4 +87,11 @@ const mapDispatchToProps = (dispatch: Function) => {
         }
     }
 }
+
+const theme = createMuiTheme({
+    palette: {
+        type: "dark",
+     }
+})
+
 export default connect(mapStateToProps, mapDispatchToProps)(App) as any;
