@@ -9,8 +9,8 @@ export const addCar = createAction<CarData>("addCar");
 export const setCar = createAction<string | undefined>("setsCar");
 
 export function getCar(name: string) {
-    return (dispatch: Dispatch) => {
-        return Backend.getCar(name).then(data => dispatch(addCar(data)))
-    }
+	return (dispatch: Dispatch) => {
+		return Backend.getCar(name).then(data => dispatch(addCar(data)))
+	}
 }
 

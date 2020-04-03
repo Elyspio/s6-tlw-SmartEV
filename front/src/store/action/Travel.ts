@@ -12,8 +12,8 @@ export const setDestPoint = createAction<TravelPoint>("setDestPoint");
 export const setJourney = createAction<Journey>("setJourney")
 
 export function getTravelSteps(start: TravelPoint, dest: TravelPoint, car: CarData) {
-    return (dispatch: Dispatch) => {
-        return Backend.getJourney(start, dest, car).then((data: Journey) => dispatch(setJourney(data)))
-    }
+	return (dispatch: Dispatch) => {
+		return Backend.getJourney(start, dest, car).then((data: Journey) => dispatch(setJourney(data)))
+	}
 }
 

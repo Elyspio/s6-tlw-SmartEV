@@ -219,7 +219,7 @@ class CustomMap extends Component<Props, State> {
 			await this.fetchPois();
 		}
 
-		if(this.state.refresh.polyline) {
+		if (this.state.refresh.polyline) {
 			await this.refreshGeoJson();
 		}
 

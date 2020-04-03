@@ -5,32 +5,34 @@ import {baseUrl} from "../../constants/Server";
 import "./ServerNotFound.scss"
 
 interface Props {
-    timer: number,
-    fn: Function
+	timer: number,
+	fn: Function
 }
 
 class ServerNotFound extends Component<Props> {
-    private interval!: number
+	private interval!: number
 
-    componentDidMount(): void {
-        this.interval = setInterval(this.props.fn, this.props.timer)
-    }
+	componentDidMount(): void {
+		this.interval = setInterval(this.props.fn, this.props.timer)
+	}
 
-    componentWillUnmount(): void {
-        clearInterval(this.interval)
-    }
+	componentWillUnmount(): void {
+		clearInterval(this.interval)
+	}
 
 
-    render() {
-        return (
-            <Paper className={"ServerNotFound"} variant={"outlined"}>
-                <Typography variant={"h3"} style={{color: "#F00"}}>Impossible de joindre le serveur</Typography>
-                <Typography variant={"subtitle1"}>Adresse : <a href={baseUrl}
-                                                               style={{color: "cyan"}}>{baseUrl}</a></Typography>
-                <Typography variant={"subtitle2"}>Refresh : {this.props.timer / 1000}s</Typography>
-            </Paper>
-        );
-    }
+	render() {
+		return (
+			<Paper className={"ServerNotFound"} variant={"outlined"}>
+				<Typography variant={"h3"} style={{color: "#F00"}}>Impossible de
+					joindre le serveur</Typography>
+				<Typography variant={"subtitle1"}>Adresse : <a href={baseUrl}
+				                                               style={{color: "cyan"}}>{baseUrl}</a></Typography>
+				<Typography variant={"subtitle2"}>Refresh
+					: {this.props.timer / 1000}s</Typography>
+			</Paper>
+		);
+	}
 }
 
 export default ServerNotFound;

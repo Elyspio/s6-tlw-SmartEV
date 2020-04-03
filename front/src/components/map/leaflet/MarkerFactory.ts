@@ -6,8 +6,8 @@ import {Poi} from "../../../../../back/src/interfaces/Poi";
 export class MarkerFactory {
 	static groupByTypes(markers: Marker[]): GroupedMarker {
 
-		const dest: Marker[]  = [] , pois: Marker[] = [], start: Marker[]  = []
-		const mapping  = new Map<MarkerType, Array<Marker>>()
+		const dest: Marker[] = [], pois: Marker[] = [], start: Marker[] = []
+		const mapping = new Map<MarkerType, Array<Marker>>()
 		mapping.set(MarkerType.chargePoint, pois);
 		mapping.set(MarkerType.destPoint, dest);
 		mapping.set(MarkerType.startPoint, start);
@@ -21,7 +21,7 @@ export class MarkerFactory {
 	}
 
 	static convert(poi: Poi): Marker {
-		return  {
+		return {
 			type: MarkerType.chargePoint,
 			pos: {
 				lat: poi.addressInfo.latitude,

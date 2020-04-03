@@ -1,10 +1,10 @@
-export class Function  {
+export class Function {
 	private readonly name: string;
 
 	constructor(name: string, time?: boolean) {
 		this.name = name;
 		console.groupCollapsed(name)
-		if(time) {
+		if (time) {
 			console.time(name);
 		}
 	}

@@ -10,81 +10,81 @@ import Modal from "./Modal";
 import {Paper, Typography} from "@material-ui/core";
 
 const mapStateToProps = (store: StoreState) => {
-    return {
-        cars: store.car.cars,
-        selected: store.car.cars[store.car.current as string]
-    }
+	return {
+		cars: store.car.cars,
+		selected: store.car.cars[store.car.current as string]
+	}
 }
 
 type  StateProps = {
-    cars: { [key: string]: CarData }
-    selected: CarData
+	cars: { [key: string]: CarData }
+	selected: CarData
 }
 
 type Props = StateProps & {
-    classes: {
-        root: any,
-    }
+	classes: {
+		root: any,
+	}
 };
 
 type State = {
-    open: boolean
+	open: boolean
 }
 
 
 class Options extends Component<Props, State> {
 
-    state = {
-        open: false
-    }
+	state = {
+		open: false
+	}
 
-    render() {
-        const cars: CarData[] = [];
-        Object.keys(this.props.cars).forEach(key => cars.push(this.props.cars[key]))
+	render() {
+		const cars: CarData[] = [];
+		Object.keys(this.props.cars).forEach(key => cars.push(this.props.cars[key]))
 
-        return (
-            <div id={"options"}>
-                <IconButton onClick={this.handleClick}>
-                    <DriveEta fontSize={"large"}/>
-                </IconButton>
-                <Modal open={this.state.open} onClick={this.handleClick}
-                       style={{
-                           justifyContent: "center",
-                           alignItems: "center",
-                           flexDirection: "row"
-                       }}
-                       ajustements={{
-                           transform: "translate(0, -200px)",
-                           display: "flex",
-                           alignItems: "center",
-                           flexDirection: "column"
-                       }}
-                >
-                    <Paper
-                        className={"container"}
-                        elevation={5}
-                        style={{}}>
-                        <Typography className={"header"} variant={"h3"}>Quelle
-                            est votre voiture ?</Typography>
-                        <div id={"cars"}>
-                            {cars.map(car => <Car key={car.id} data={car}
-                                                  selected={this.props.selected.id === car.id}/>)}
-                        </div>
-                    </Paper>
-                </Modal>
+		return (
+			<div id={"options"}>
+				<IconButton onClick={this.handleClick}>
+					<DriveEta fontSize={"large"}/>
+				</IconButton>
+				<Modal open={this.state.open} onClick={this.handleClick}
+				       style={{
+					       justifyContent: "center",
+					       alignItems: "center",
+					       flexDirection: "row"
+				       }}
+				       ajustements={{
+					       transform: "translate(0, -200px)",
+					       display: "flex",
+					       alignItems: "center",
+					       flexDirection: "column"
+				       }}
+				>
+					<Paper
+						className={"container"}
+						elevation={5}
+						style={{}}>
+						<Typography className={"header"} variant={"h3"}>Quelle
+							est votre voiture ?</Typography>
+						<div id={"cars"}>
+							{cars.map(car => <Car key={car.id} data={car}
+							                      selected={this.props.selected.id === car.id}/>)}
+						</div>
+					</Paper>
+				</Modal>
 
-            </div>
-        );
-    }
+			</div>
+		);
+	}
 
-    private handleClick = () => {
-        console.log("handle click");
-        this.setState(prev => {
-            return {
-                open: !prev.open
-            }
-        })
-    }
+	private handleClick = () => {
+		console.log("handle click");
+		this.setState(prev => {
+			return {
+				open: !prev.open
+			}
+		})
+	}
 }
 
 export default connect(mapStateToProps, null)(Options) as any;

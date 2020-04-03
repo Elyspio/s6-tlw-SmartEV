@@ -8,20 +8,19 @@ import CustomMap from "./map/Map";
 import {StoreState} from "../store/reducer";
 import {Backend} from "../services/backend";
 import * as Error from "./errors"
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import {Paper} from "@material-ui/core";
 
 type StateProps = {
-    location: string
+	location: string
 }
 
 type State = {
-    serverIsOk: boolean
+	serverIsOk: boolean
 }
 
 type DispatchProps = {
-    getCars: Function,
-    setDefaultCar: Function
+	getCars: Function,
+	setDefaultCar: Function
 }
 type Props = StateProps & DispatchProps;
 
@@ -29,68 +28,62 @@ type Props = StateProps & DispatchProps;
 class App extends React.Component<Props, State> {
 
 
-    public state = {
-        serverIsOk: false
-    }
+	public state = {
+		serverIsOk: false
+	}
 
-    async componentDidMount() {
-        await this.checkServer();
-    }
+	async componentDidMount() {
+		await this.checkServer();
+	}
 
-    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
-        if (this.state.serverIsOk) {
-            this.props.getCars();
-            this.props.setDefaultCar();
-        }
-    }
+	componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
+		if (this.state.serverIsOk) {
+			this.props.getCars();
+			this.props.setDefaultCar();
+		}
+	}
 
-    render() {
+	render() {
 
-        const app = <>
-            <div id={"content"}>
-                <CustomMap/>
-            </div>
-            <Options/>
-        </>
-
-
-        let error = <div id={"content"}>
-            {this.state.serverIsOk ? <CustomMap/> : <Error.ServerNotFound fn={this.checkServer} timer={1000}/>}
-        </div>;
-        return (
+		const app = <>
+			<div id={"content"}>
+				<CustomMap/>
+			</div>
+			<Options/>
+		</>
 
 
-            <Paper className="App">
-                {/*<ThemeProvider theme={theme}>*/}
-                {this.state.serverIsOk ? app : error}
-                {/*</ThemeProvider>*/}
-            </Paper>
-        );
-    }
+		let error = <div id={"content"}>
+			{this.state.serverIsOk ? <CustomMap/> :
+				<Error.ServerNotFound fn={this.checkServer} timer={1000}/>}
+		</div>;
+		return (
 
-    private checkServer = async () => {
-        this.setState({serverIsOk: await Backend.ping()})
-    }
+
+			<Paper className="App">
+				{this.state.serverIsOk ? app : error}
+			</Paper>
+		);
+	}
+
+	private checkServer = async () => {
+		this.setState({serverIsOk: await Backend.ping()})
+	}
 }
 
 const mapStateToProps = (state: StoreState) => {
-    return {}
+	return {}
 };
 const mapDispatchToProps = (dispatch: Function) => {
-    return {
-        getCars: () => {
-            cars.forEach(id => dispatch(getCar(id)))
-        },
-        setDefaultCar: () => {
-            dispatch(setCar(init))
-        }
-    }
+	return {
+		getCars: () => {
+			cars.forEach(id => dispatch(getCar(id)))
+		},
+		setDefaultCar: () => {
+			dispatch(setCar(init))
+		}
+	}
 }
 
-const theme = createMuiTheme({
-    palette: {
-        type: "dark",
-    }
-})
 
 export default connect(mapStateToProps, mapDispatchToProps)(App) as any;

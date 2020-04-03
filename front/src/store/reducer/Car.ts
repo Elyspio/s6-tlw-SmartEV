@@ -6,29 +6,27 @@ import {CarData} from "../../../../back/src/interfaces/Car";
 
 
 export interface State {
-    current?: string,
-    cars: {
-        [key: string]: CarData
-    }
+	current?: string,
+	cars: {
+		[key: string]: CarData
+	}
 }
 
 
 const initialState: State = {
-    current: initCar,
-    cars: {}
+	current: initCar,
+	cars: {}
 };
 
 export const reducer = createReducer<State>(initialState, builder => {
 
-    builder.addCase(addCar, (state, action) => {
-        state.cars[action.payload.id as string] = action.payload
-    });
+	builder.addCase(addCar, (state, action) => {
+		state.cars[action.payload.id as string] = action.payload
+	});
 
-    builder.addCase(setCar, (state, action) => {
-        state.current = action.payload
-    })
-
-
+	builder.addCase(setCar, (state, action) => {
+		state.current = action.payload
+	})
 });
 
 
