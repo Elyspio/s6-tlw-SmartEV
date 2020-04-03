@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Paper} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import {baseUrl} from "../../constants/Server";
-import "./ServerNotFound.css"
+import "./ServerNotFound.scss"
 
 interface Props {
     timer: number,

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './Options.css'
+import './Options.scss'
 import {StoreState} from "../../store/reducer";
 import {CarData} from "../../../../back/src/interfaces/Car";
 import Car from "./Car";

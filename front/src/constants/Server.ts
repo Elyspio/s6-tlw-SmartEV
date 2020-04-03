@@ -1,6 +1,5 @@
 export const baseApiPath = "";
-export const host = "localhost";
-export const protocol = "http";
+export const host = window.location.origin.replace(/:[0-9]+/g, "");
 export const port = 4000;
 
-export const baseUrl = `${protocol}://${host}:${port}/${baseApiPath}`
+export const baseUrl = `${host}:${port}/${baseApiPath}`

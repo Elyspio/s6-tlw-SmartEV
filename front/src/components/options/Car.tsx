@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import {Paper} from "@material-ui/core";
 import {CarData} from '../../../../back/src/interfaces/Car'
-import './Car.css'
+import './Car.scss'
 import {Dispatch} from "redux";
 import {setCar} from "../../store/action/Car";
 import {connect} from "react-redux";

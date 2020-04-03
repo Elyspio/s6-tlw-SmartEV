@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from "react-redux";
-import './App.css'
+import './App.scss'
 import {getCar, setCar} from "../store/action/Car";
 import {cars, init} from "../constants/Car";
 import Options from "./options/Options";

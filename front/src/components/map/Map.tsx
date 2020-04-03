@@ -19,12 +19,11 @@ import {connect} from "react-redux";
 import {Localisation} from "../../services/localisation";
 import {Backend} from "../../services/backend";
 import ContextMenu from "./ContextMenu";
-import './Map.css'
+import './Map.scss'
 import {BoundingBox, Marker, MarkerType} from "../../store/interface/Map";
 import {MarkerFactory} from "./leaflet/MarkerFactory";
 import {init as defaultPosition} from "../../constants/Map";
 import * as Logger from "../../services/Logger";
-import {PolyLine} from "../../../../back/src/interfaces/Journey";
 
 export type ContextMenuData = {
 	screenPos: {
