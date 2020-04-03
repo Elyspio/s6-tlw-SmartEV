@@ -7,7 +7,8 @@ import { cars } from "../data/Car";
 import { CarData } from "../interfaces/Car";
 import { Poi } from "../interfaces/Poi";
 import { Journey } from "../interfaces/Journey";
-
+import { distance } from "../util/Helper";
+import { LatLngTuple } from "leaflet";
 const cors = require("cors");
 console.log(cors);
 const express = require("express");
@@ -34,7 +35,7 @@ back.get("/travel", async (req: ItineraireQuery, res) => {
 
 	let travel: Journey = (
 		await axios.get(
-			`https://api.mapbox.com/directions/v5/mapbox/driving/${waypoints}?alternatives=false&geometries=geojson&steps=true&access_token=${token}`
+			`https://api.mapbox.com/directions/v5/mapbox/driving/${waypoints}?alternatives=false&geometries=geojson&steps=true&overview=full&access_token=${token}`
 		)
 	).data;
 
@@ -52,14 +53,17 @@ back.get("/travel", async (req: ItineraireQuery, res) => {
 
 		currentStep--;
 
+		const lastStep = travel.routes[0].legs[travel.routes[0].legs.length - 1].steps[currentStep];
+
 		const compatiblePois = apiCache.filter((poi: Poi) => poi.connections.some((poiCo) => car.connectors.some((carCo) => carCo === poiCo.connectionTypeId)));
-		//
-		// compatiblePois.reduce((previousPoi, currentPoi, currentIndex) => {
-		//
-		// 	if(distance(previousPoi, currentPoi) < 1000)
-		//
-		//
-		// });
+
+		const chargePointToUse = compatiblePois.reduce((previousPoi, currentPoi, currentIndex) => {
+			console.log(previousPoi, currentPoi);
+			const { latitude: latP, longitude: longP } = previousPoi.addressInfo;
+			const { latitude: latC, longitude: longC } = currentPoi.addressInfo;
+			if (distance([latP, longP], lastStep.maneuver.location) < distance([latC, longC], lastStep.maneuver.location)) return previousPoi;
+			return currentPoi;
+		});
 		travel.routes[0].legs[travel.routes[0].legs.length - 1].steps[currentStep].maneuver.location;
 	}
 

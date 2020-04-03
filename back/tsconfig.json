@@ -6,7 +6,10 @@
     "outDir": "build",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "dom"]
+    "lib": [
+      "ESNext",
+      "dom"
+    ]
   },
   "compileOnSave": true,
   "exclude": [

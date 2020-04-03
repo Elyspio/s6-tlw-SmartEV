@@ -1,6 +1,6 @@
-import { GeoJSON } from "leaflet";
+import { GeoJSON, LatLngTuple } from "leaflet";
 
-type GeoJsonObject = GeoJSON.GeoJsonObject;
+type Geometry = GeoJSON.LineString;
 
 export type Journey = {
 	routes: Route[];
@@ -12,7 +12,7 @@ export type Journey = {
 export interface Route {
 	legs: Leg[];
 	weight_name: string;
-	geometry: GeoJsonObject;
+	geometry: Geometry;
 	distance: number;
 	duration: number;
 	weight: number;
@@ -43,7 +43,7 @@ export interface Intersection {
 	geometry_index: 0;
 	/* The index in the bearings and entry arrays of the chosen exit */
 	out: number;
-	location: LngLag;
+	location: LatLngTuple;
 	classes: IntersectionClass[];
 	lanes?: Lane[];
 }
@@ -58,11 +58,11 @@ export interface Step {
 		/* An angle from true north to the direction of travel immediately before the maneuver.*/
 		bearing_before: Angle;
 		type: ManeuverType;
-		location: LngLag;
+		location: LatLngTuple;
 		instruction: string;
 	};
 	weight: number;
-	geometry: GeoJsonObject;
+	geometry: Geometry;
 	duration: number;
 	mode: "driving";
 	driving_side: "left" | "right";
@@ -70,14 +70,14 @@ export interface Step {
 
 export interface Waypoint {
 	name: string;
-	location: LngLag;
+	location: LatLngTuple;
 	distance?: number;
 }
 
 export type PolyLine = string;
 /* Angle from the real north */
 export type Angle = number;
-export type LngLag = number[];
+
 export type IntersectionClass = "toll" | "ferry" | "restricted" | "motorway" | "tunnel";
 export type ManeuverType =
 	| "turn"

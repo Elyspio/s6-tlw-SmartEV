@@ -1,12 +1,12 @@
 {
-    "defaultSeverity": "warn",
-    "extends": [
-        "tslint:recommended"
-    ],
-    "jsRules": {},
-    "rules": {
-        "no-var-requires": false,
-        "no-console": false
-    },
-    "rulesDirectory": []
+  "defaultSeverity": "warn",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-var-requires": false,
+    "no-console": false
+  },
+  "rulesDirectory": []
 }

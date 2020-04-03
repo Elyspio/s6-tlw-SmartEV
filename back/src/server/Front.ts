@@ -1,5 +1,6 @@
 import * as path from "path";
 import { Express } from "express";
+
 const express = require("express");
 
 const staticFolder = path.resolve(__dirname, "../../../front/build");
