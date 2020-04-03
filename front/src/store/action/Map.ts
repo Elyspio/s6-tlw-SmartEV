@@ -16,3 +16,5 @@ export const setBoundingBox = createAction<BoundingBox>("setBoundingBox")
 
 export const addCustomMarker = createAction<Marker[]>("addCustomMarker")
 export const removeCustomMarker = createAction<Marker>("removeCustomMarker")
+export const setStartMarker = createAction<LatLngExpression>("setStartMarker");
+export const setDestMarker = createAction<LatLngExpression>("setDestMarker");

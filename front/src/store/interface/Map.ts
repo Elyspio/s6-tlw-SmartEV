@@ -2,7 +2,7 @@ import {LatLngExpression, LatLngLiteral} from "leaflet";
 import {Poi} from "../../../../back/src/interfaces/Poi";
 
 export interface Marker {
-    pos: LatLngLiteral,
+    pos: LatLngExpression,
     type: MarkerType
     data?: Poi
 }
@@ -26,7 +26,7 @@ export interface State {
 }
 
 export type GroupedMarker = {
-    poi: Marker[],
+    pois: Marker[],
     dest: Marker,
     start: Marker
 }

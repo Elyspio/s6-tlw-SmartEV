@@ -7,10 +7,18 @@ import {connect} from "react-redux";
 import {StoreState} from "../../store/reducer";
 import {MarkerType} from "../../store/interface/Map";
 import {LatLngLiteral} from "leaflet";
-import {getTravelSteps, setDestPoint, setStartPoint} from "../../store/action/Travel";
+import {
+    getTravelSteps,
+    setDestPoint,
+    setStartPoint
+} from "../../store/action/Travel";
 import {TravelPoint} from "../../store/reducer/Travel";
 import {CarData} from "../../../../back/src/interfaces/Car";
-import {addCustomMarker} from "../../store/action/Map";
+import {
+    addCustomMarker,
+    setDestMarker,
+    setStartMarker
+} from "../../store/action/Map";
 
 
 interface StateProps {
@@ -40,11 +48,11 @@ const mapDispatchToProps = (dispatch: Function) => {
     return {
         setStartPoint: (point: TravelPoint) => {
             dispatch(setStartPoint(point))
-            dispatch(addCustomMarker([{pos: point.pos, type: MarkerType.startPoint}]))
+            dispatch(setStartMarker(point.pos));
         },
         setDestPoint: (point: TravelPoint) => {
             dispatch(setDestPoint(point))
-            dispatch(addCustomMarker([{pos: point.pos, type: MarkerType.destPoint}]))
+            dispatch(setDestMarker(point.pos));
         },
         getTravel: (start: TravelPoint, dest: TravelPoint, car: CarData) => {
             dispatch(getTravelSteps(start, dest, car))
