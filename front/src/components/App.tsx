@@ -8,7 +8,6 @@ import CustomMap from "./map/Map";
 import {StoreState} from "../store/reducer";
 import {Backend} from "../services/backend";
 import * as Error from "./errors"
-import { ThemeProvider } from '@material-ui/core/styles';
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import {Paper} from "@material-ui/core";
 
@@ -63,7 +62,7 @@ class App extends React.Component<Props, State> {
 
             <Paper className="App">
                 {/*<ThemeProvider theme={theme}>*/}
-                    {this.state.serverIsOk ? app: error}
+                {this.state.serverIsOk ? app : error}
                 {/*</ThemeProvider>*/}
             </Paper>
         );
@@ -91,7 +90,7 @@ const mapDispatchToProps = (dispatch: Function) => {
 const theme = createMuiTheme({
     palette: {
         type: "dark",
-     }
+    }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App) as any;
