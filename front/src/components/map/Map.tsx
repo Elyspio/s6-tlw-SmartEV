@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import * as L from 'leaflet'
 import * as Leaflet from 'leaflet'
 import {
+	DragEndEvent,
 	GeoJSON,
 	LatLng,
 	LatLngExpression,
+	LatLngLiteral,
 	LayerGroup,
 	LeafletMouseEvent
 } from 'leaflet'
@@ -14,7 +16,12 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import {Poi} from "../../../../back/src/interfaces/Poi";
 import {StoreState} from "../../store/reducer";
 import {Dispatch} from "redux";
-import {changePosition, setBoundingBox, setPois} from "../../store/action/Map";
+import {
+	changeMarkerPos, ChangeMarkerPosFn,
+	changePosition,
+	setBoundingBox,
+	setPois
+} from "../../store/action/Map";
 import {connect} from "react-redux";
 import {Localisation} from "../../services/localisation";
 import {Backend} from "../../services/backend";
@@ -22,8 +29,11 @@ import ContextMenu from "./ContextMenu";
 import './Map.scss'
 import {BoundingBox, Marker, MarkerType} from "../../store/interface/Map";
 import {MarkerFactory} from "./leaflet/MarkerFactory";
-import {init as defaultPosition} from "../../constants/Map";
+import {init as defaultPosition} from "../../constants/map"
 import * as Logger from "../../services/Logger";
+import {getTravelSteps} from "../../store/action/Travel";
+import {TravelPoint} from "../../store/reducer/Travel";
+import {CarData, CarId} from "../../../../back/src/interfaces/Car";
 
 export type ContextMenuData = {
 	screenPos: {
@@ -61,13 +71,15 @@ type DispatchProps = {
 	changeMapPosition: Function,
 	setPois: Function,
 	setBoundingBox: Function,
+	changeMarkerPos: ({newPos, oldPos}: { newPos: LatLngLiteral, oldPos: LatLngLiteral }) => void,
+	getTravel: (start: LatLngLiteral, dest: LatLngLiteral, car: CarId) => void
 }
 
 type Props = DispatchProps & StoreProps & {}
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
+const mapDispatchToProps = (dispatch: Function) => {
 	return {
-		changeMapPosition: (position: LatLngExpression) => {
+		changeMapPosition: (position: LatLngLiteral) => {
 			dispatch(changePosition(position))
 		},
 		setPois: (pois: Poi[]) => {
@@ -76,6 +88,12 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 		setBoundingBox: (boundingBox: BoundingBox) => {
 			dispatch(setBoundingBox(boundingBox))
 		},
+		changeMarkerPos: ({newPos, oldPos}: ChangeMarkerPosFn) => {
+			dispatch(changeMarkerPos({newPos, oldPos}))
+		},
+		getTravel: (start: LatLngLiteral, dest: LatLngLiteral, car: CarId) => {
+			dispatch(getTravelSteps(start, dest, car))
+		}
 	}
 }
 type State = {
@@ -240,22 +258,27 @@ class CustomMap extends Component<Props, State> {
 				this.map.removeLayer(this.travelMarkers);
 			}
 			this.travelMarkers = L.layerGroup();
-			let marker
 			if (start) {
-				marker = MarkerFactory.createMarker(start.pos, MarkerType.startPoint);
-				marker.on("click", (evt: LeafletMouseEvent) => this.onMarkerClick(evt, start));
-				this.travelMarkers.addLayer(marker);
+				this.travelMarkers.addLayer(this.createCustomMarker(MarkerType.startPoint, start));
 			}
 			if (dest) {
-				marker = MarkerFactory.createMarker(dest.pos, MarkerType.destPoint);
-				marker.on("click", (evt: LeafletMouseEvent) => this.onMarkerClick(evt, dest));
-				this.travelMarkers.addLayer(marker);
+				this.travelMarkers.addLayer(this.createCustomMarker(MarkerType.destPoint, dest));
 			}
+
+			if(start && dest && this.state.car.id) {
+				this.props.getTravel(start.pos, dest.pos, this.state.car.id as CarId);
+			}
+
 			this.map?.addLayer(this.travelMarkers);
 
 		}
+	}
 
-
+	private createCustomMarker(type: MarkerType, marker: Marker): L.Marker {
+		const m = MarkerFactory.createMarker(marker.pos, type);
+		m.on("click", (evt: LeafletMouseEvent) => this.onMarkerClick(evt, marker));
+		m.on("dragend", (event) => this.onMarkerMove(event, marker.pos as LatLngLiteral));
+		return m;
 	}
 
 	private refreshGeoJson() {
@@ -340,6 +363,14 @@ class CustomMap extends Component<Props, State> {
 			contextMenu: undefined
 		})
 
+	}
+
+	private onMarkerMove(event: DragEndEvent, originalPos: LatLngLiteral) {
+		const newPos = event.target.getLatLng()
+		this.props.changeMarkerPos({
+			newPos: {lng: newPos.lng, lat: newPos.lat},
+			oldPos: {lng: originalPos.lng, lat: originalPos.lat}
+		})
 	}
 }
 

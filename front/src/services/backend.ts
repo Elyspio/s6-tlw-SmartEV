@@ -1,5 +1,5 @@
 import {baseUrl} from "../constants/Server";
-import {CarData} from "../../../back/src/interfaces/Car";
+import {CarData, CarId} from "../../../back/src/interfaces/Car";
 import {LatLngLiteral} from "leaflet";
 import {TravelPoint} from "../store/reducer/Travel";
 import {Journey} from "../../../back/src/interfaces/Journey";
@@ -34,10 +34,10 @@ export class Backend {
 		}
 	}
 
-	public static async getJourney(start: TravelPoint, dest: TravelPoint, car: CarData): Promise<Journey> {
+	public static async getJourney(start: LatLngLiteral, dest: LatLngLiteral, carId: CarId): Promise<Journey> {
 		const raw = await fetch(`${baseUrl}travel?${this.encodeQueryData({
-			waitpoints: [start.pos, dest.pos],
-			car: car.id
+			waitpoints: [start, dest],
+			car: carId
 		})}`)
 		const text = await raw.text();
 		try {

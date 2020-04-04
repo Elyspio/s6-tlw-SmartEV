@@ -24,7 +24,8 @@ type  StateProps = {
 type Props = StateProps & {
 	classes: {
 		root: any,
-	}
+	},
+	open: boolean
 };
 
 type State = {
@@ -34,14 +35,18 @@ type State = {
 
 class Options extends Component<Props, State> {
 
-	state = {
-		open: false
+
+	constructor(props: Props) {
+		super(props);
+		this.state = {
+			open: props.selected === undefined
+		}
 	}
 
 	render() {
 		const cars: CarData[] = [];
 		Object.keys(this.props.cars).forEach(key => cars.push(this.props.cars[key]))
-
+		console.log("cars", this.props);
 		return (
 			<div id={"options"}>
 				<IconButton onClick={this.handleClick}>
@@ -68,7 +73,7 @@ class Options extends Component<Props, State> {
 							est votre voiture ?</Typography>
 						<div id={"cars"}>
 							{cars.map(car => <Car key={car.id} data={car}
-							                      selected={this.props.selected.id === car.id}/>)}
+							                      selected={this.props.selected && this.props.selected.id === car.id}/>)}
 						</div>
 					</Paper>
 				</Modal>

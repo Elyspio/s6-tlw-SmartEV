@@ -1,6 +1,6 @@
 import {GroupedMarker, Marker, MarkerType} from "../../../store/interface/Map";
 import * as L from "leaflet";
-import {LatLngExpression} from "leaflet";
+import {LatLngExpression, LatLngLiteral} from "leaflet";
 import {Poi} from "../../../../../back/src/interfaces/Poi";
 
 export class MarkerFactory {
@@ -47,6 +47,8 @@ export class MarkerFactory {
 		}
 		return L.marker(latLng, {
 			icon: icon,
+			draggable: markerType === MarkerType.destPoint || markerType === MarkerType.startPoint,
+			autoPan: markerType === MarkerType.destPoint || markerType === MarkerType.startPoint,
 			keyboard: markerType !== MarkerType.chargePoint
 		})
 	}
@@ -60,5 +62,23 @@ export class MarkerFactory {
 			popupAnchor: [1, -34],
 			shadowSize: [41, 41]
 		})
+	}
+
+	static equal(a: LatLngLiteral, b: LatLngLiteral): boolean;
+	static equal(a: Marker, b: Marker): boolean;
+
+	static equal(a: LatLngLiteral | Marker, b: LatLngLiteral | Marker) {
+		if ((a as Marker).pos !== undefined && (b as Marker).pos !== undefined) {
+			a = a as Marker;
+			b = b as Marker;
+			return MarkerFactory.equal(a.pos, b.pos) && a.type === b.type
+		}
+
+		if ((a as LatLngLiteral).lat !== undefined && (b as LatLngLiteral).lat !== undefined) {
+			a = a as LatLngLiteral;
+			b = b as LatLngLiteral;
+			return a.lat === b.lat && a.lng === b.lat;
+		}
+
 	}
 }

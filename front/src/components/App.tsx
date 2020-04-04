@@ -9,9 +9,11 @@ import {StoreState} from "../store/reducer";
 import {Backend} from "../services/backend";
 import * as Error from "./errors"
 import {Paper} from "@material-ui/core";
+import {back} from "../../../back/src/server/Back";
 
 type StateProps = {
-	location: string
+	location: string,
+	currentCar?: string
 }
 
 type State = {
@@ -34,13 +36,6 @@ class App extends React.Component<Props, State> {
 
 	async componentDidMount() {
 		await this.checkServer();
-	}
-
-	componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
-		if (this.state.serverIsOk) {
-			this.props.getCars();
-			this.props.setDefaultCar();
-		}
 	}
 
 	render() {
@@ -67,12 +62,19 @@ class App extends React.Component<Props, State> {
 	}
 
 	private checkServer = async () => {
-		this.setState({serverIsOk: await Backend.ping()})
+		const serverIsOk = await Backend.ping();
+		if(serverIsOk) {
+			this.props.getCars();
+			this.props.setDefaultCar();
+		}
+		this.setState({serverIsOk})
 	}
 }
 
 const mapStateToProps = (state: StoreState) => {
-	return {}
+	return {
+		currentCar: state.car.current
+	}
 };
 const mapDispatchToProps = (dispatch: Function) => {
 	return {

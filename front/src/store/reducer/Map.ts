@@ -1,7 +1,9 @@
 import {createReducer} from "@reduxjs/toolkit";
 
+import {init as initMap} from "../../constants/map"
+
 import {
-	addCustomMarker,
+	addCustomMarker, changeMarkerPos,
 	changePosition,
 	changeZoomLevel,
 	removeCustomMarker,
@@ -10,7 +12,6 @@ import {
 	setPois,
 	setStartMarker
 } from "../action/Map";
-import {init as initMap} from "../../constants/Map";
 import {MarkerType, State} from "../interface/Map";
 
 
@@ -79,6 +80,13 @@ export const reducer = createReducer<State>(initialState, builder => {
 	builder.addCase(removeCustomMarker, (state, action) => {
 		const markerIndex = state.customMarker.findIndex(m => m === action.payload)
 		state.customMarker = state.customMarker.slice(markerIndex, 1);
+	})
+
+	builder.addCase(changeMarkerPos, (state, action) => {
+		const index = state.customMarker.findIndex(m => m.pos.lng === action.payload.oldPos.lng && m.pos.lat === action.payload.oldPos.lat);
+		console.log(state, state.customMarker[0], state.customMarker[0], action.payload.oldPos);
+		state.customMarker[index].pos = action.payload.newPos;
+		state.customMarker = JSON.parse(JSON.stringify(state.customMarker));
 	})
 
 });

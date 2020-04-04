@@ -13,7 +13,7 @@ import {
 	setStartPoint
 } from "../../store/action/Travel";
 import {TravelPoint} from "../../store/reducer/Travel";
-import {CarData} from "../../../../back/src/interfaces/Car";
+import {CarData, CarId} from "../../../../back/src/interfaces/Car";
 import {setDestMarker, setStartMarker} from "../../store/action/Map";
 
 
@@ -28,7 +28,7 @@ interface StateProps {
 interface DispatchProps {
 	setDestPoint: (marker: TravelPoint) => void,
 	setStartPoint: (marker: TravelPoint) => void,
-	getTravel: (start: TravelPoint, dest: TravelPoint, car: CarData) => void
+	getTravel: (start: LatLngLiteral, dest: LatLngLiteral, car: CarId) => void
 }
 
 const mapStateToProps = (state: StoreState) => {
@@ -50,7 +50,7 @@ const mapDispatchToProps = (dispatch: Function) => {
 			dispatch(setDestPoint(point))
 			dispatch(setDestMarker(point.pos));
 		},
-		getTravel: (start: TravelPoint, dest: TravelPoint, car: CarData) => {
+		getTravel: (start: LatLngLiteral, dest: LatLngLiteral, car: CarId) => {
 			dispatch(getTravelSteps(start, dest, car))
 		}
 	}
@@ -105,13 +105,13 @@ class ContextMenu extends Component<Props> {
 			case MarkerType.startPoint:
 				this.props.setStartPoint(point)
 				if (this.props.travel.dest) {
-					this.props.getTravel(point, this.props.travel.dest, this.props.car)
+					this.props.getTravel(point.pos, this.props.travel.dest.pos, this.props.car.id as CarId)
 				}
 				break;
 			case MarkerType.destPoint:
 				this.props.setDestPoint(point)
 				if (this.props.travel.start) {
-					this.props.getTravel(this.props.travel.start, point, this.props.car)
+					this.props.getTravel(this.props.travel.start.pos, point.pos, this.props.car.id as CarId)
 				}
 				break;
 		}
