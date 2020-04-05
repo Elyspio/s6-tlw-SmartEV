@@ -6,9 +6,8 @@ import { default as axios } from "axios";
 import { cars } from "../data/Car";
 import { CarData } from "../interfaces/Car";
 import { Poi } from "../interfaces/Poi";
-import { Journey } from "../interfaces/Journey";
 import { distance } from "../util/Helper";
-import { LatLngTuple } from "leaflet";
+
 const cors = require("cors");
 console.log(cors);
 const express = require("express");
@@ -32,17 +31,32 @@ back.get("/travel", async (req: ItineraireQuery, res) => {
 	const waypoints = req.query.waitpoints.map((coord) => `${coord.lng},${coord.lat}`).join(";");
 
 	console.log(`Request a travel for car ${req.query.car}`, waypoints);
+	console.time("a");
 
-	let travel: Journey = (
-		await axios.get(
+	let travel;
+
+	try {
+		let response = await axios.get(
 			`https://api.mapbox.com/directions/v5/mapbox/driving/${waypoints}?alternatives=false&geometries=geojson&steps=true&overview=full&access_token=${token}`
-		)
-	).data;
+		);
+		if (response.data.code !== "Ok") {
+			throw new Error(response.data);
+		}
+		travel = response.data;
+	} catch (e) {
+		console.error("Error in mapbox call", e);
+		return res.status(500).json({
+			service: "Mapbox",
+			message: JSON.stringify(e)
+		});
+	}
+
+	console.timeEnd("a");
 
 	const car = cars[req.query.car];
 	const carRange = car.range * 1000; // get car range in meters instead of kilometers
 
-	if (travel.routes[0].distance > carRange) {
+	if (false && travel.routes[0].distance > carRange) {
 		let currentDistance = 0;
 		let currentStep = 0;
 
@@ -58,7 +72,6 @@ back.get("/travel", async (req: ItineraireQuery, res) => {
 		const compatiblePois = apiCache.filter((poi: Poi) => poi.connections.some((poiCo) => car.connectors.some((carCo) => carCo === poiCo.connectionTypeId)));
 
 		const chargePointToUse = compatiblePois.reduce((previousPoi, currentPoi, currentIndex) => {
-			console.log(previousPoi, currentPoi);
 			const { latitude: latP, longitude: longP } = previousPoi.addressInfo;
 			const { latitude: latC, longitude: longC } = currentPoi.addressInfo;
 			if (distance([latP, longP], lastStep.maneuver.location) < distance([latC, longC], lastStep.maneuver.location)) return previousPoi;

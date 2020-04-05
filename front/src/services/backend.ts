@@ -1,11 +1,10 @@
 import {baseUrl} from "../constants/Server";
 import {CarData, CarId} from "../../../back/src/interfaces/Car";
 import {LatLngLiteral} from "leaflet";
-import {TravelPoint} from "../store/reducer/Travel";
 import {Journey} from "../../../back/src/interfaces/Journey";
 
-export class Backend {
 
+export class Backend {
 
 	public static async getPOI(borderBox: { southWest: LatLngLiteral, northEast: LatLngLiteral }, carName: string) {
 		const raw = await fetch(`${baseUrl}poi?${this.encodeQueryData({
@@ -34,19 +33,8 @@ export class Backend {
 		}
 	}
 
-	public static async getJourney(start: LatLngLiteral, dest: LatLngLiteral, carId: CarId): Promise<Journey> {
-		const raw = await fetch(`${baseUrl}travel?${this.encodeQueryData({
-			waitpoints: [start, dest],
-			car: carId
-		})}`)
-		const text = await raw.text();
-		try {
-			return JSON.parse(text)
-		} catch (e) {
-			console.error(text, e);
-			throw  e;
-		}
-	}
+
+
 
 	static async ping(): Promise<boolean> {
 		try {
@@ -57,7 +45,7 @@ export class Backend {
 		}
 	}
 
-	private static encodeQueryData(data: { [key: string]: any }) {
+	public static encodeQueryData(data: { [key: string]: any }) {
 		const ret = [];
 		for (let d in data) {
 			const obj = typeof data[d] == "object" ? JSON.stringify(data[d]) : data[d];
