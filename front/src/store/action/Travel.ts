@@ -1,7 +1,6 @@
 import {createAction as _createAction, Dispatch} from '@reduxjs/toolkit'
-import {Backend} from "../../services/backend";
 import {TravelPoint} from "../reducer/Travel";
-import {CarData, CarId} from "../../../../back/src/interfaces/Car";
+import {CarId} from "../../../../back/src/interfaces/Car";
 import {Journey} from "../../../../back/src/interfaces/Journey";
 import {LatLngLiteral} from "leaflet";
 import {JourneyService} from "../../services/JourneyService";

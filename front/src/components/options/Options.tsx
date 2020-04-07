@@ -1,24 +1,25 @@
 import React, {Component} from 'react';
 import './Options.scss'
 import {StoreState} from "../../store/reducer";
-import {CarData} from "../../../../back/src/interfaces/Car";
+import {CarData, CarId} from "../../../../back/src/interfaces/Car";
 import Car from "./Car";
 import {connect} from "react-redux";
 import {DriveEta} from "@material-ui/icons";
 import IconButton from "@material-ui/core/IconButton";
 import Modal from "./Modal";
 import {Paper, Typography} from "@material-ui/core";
+import {Cars} from "../../store/reducer/Car";
 
 const mapStateToProps = (store: StoreState) => {
 	return {
 		cars: store.car.cars,
-		selected: store.car.cars[store.car.current as string]
+		selected: store.car.cars.get(store.car.current as CarId)
 	}
 }
 
 type  StateProps = {
-	cars: { [key: string]: CarData }
-	selected: CarData
+	cars: Cars
+	selected?: CarData
 }
 
 type Props = StateProps & {
@@ -44,9 +45,9 @@ class Options extends Component<Props, State> {
 	}
 
 	render() {
-		const cars: CarData[] = [];
-		Object.keys(this.props.cars).forEach(key => cars.push(this.props.cars[key]))
+
 		console.log("cars", this.props);
+		const cars = Array.from(this.props.cars, ([, value]) => value);
 		return (
 			<div id={"options"}>
 				<IconButton onClick={this.handleClick}>
@@ -72,8 +73,11 @@ class Options extends Component<Props, State> {
 						<Typography className={"header"} variant={"h3"}>Quelle
 							est votre voiture ?</Typography>
 						<div id={"cars"}>
-							{cars.map(car => <Car key={car.id} data={car}
-							                      selected={this.props.selected && this.props.selected.id === car.id}/>)}
+							{cars.map(car =>
+								<Car key={car.id} data={car}
+								     selected={this.props.selected && this.props.selected.id === car.id}
+								/>)
+							}
 						</div>
 					</Paper>
 				</Modal>

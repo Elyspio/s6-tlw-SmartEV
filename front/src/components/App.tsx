@@ -9,7 +9,6 @@ import {StoreState} from "../store/reducer";
 import {Backend} from "../services/backend";
 import * as Error from "./errors"
 import {Paper} from "@material-ui/core";
-import {back} from "../../../back/src/server/Back";
 
 type StateProps = {
 	location: string,
@@ -63,7 +62,7 @@ class App extends React.Component<Props, State> {
 
 	private checkServer = async () => {
 		const serverIsOk = await Backend.ping();
-		if(serverIsOk) {
+		if (serverIsOk) {
 			this.props.getCars();
 			this.props.setDefaultCar();
 		}

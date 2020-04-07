@@ -11,14 +11,13 @@ export class JourneyService {
 			car: carId
 		})}`).then(raw => raw.json())
 
-		if(MapboxError.has(json.code)) throw MapboxError.get(json.code)
+		if (MapboxError.has(json.code)) throw MapboxError.get(json.code)
 
 		return json;
 
 	}
 
 }
-
 
 
 export const MapboxError = new Map<string, Error>([

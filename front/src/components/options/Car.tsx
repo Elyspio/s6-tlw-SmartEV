@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import {Paper} from "@material-ui/core";
-import {CarData} from '../../../../back/src/interfaces/Car'
+import {CarData, CarId} from '../../../../back/src/interfaces/Car'
 import './Car.scss'
 import {Dispatch} from "redux";
 import {setCar} from "../../store/action/Car";
@@ -15,7 +15,7 @@ type DispatchProps = {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
 	return {
-		setCurrentCar: (id: string) => dispatch(setCar(id))
+		setCurrentCar: (id: CarId) => dispatch(setCar(id))
 	}
 }
 

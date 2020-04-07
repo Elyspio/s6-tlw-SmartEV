@@ -1,27 +1,26 @@
 import {createReducer} from "@reduxjs/toolkit";
-
 import {addCar, setCar} from "../action/Car";
 import {init as initCar} from "../../constants/Car";
-import {CarData} from "../../../../back/src/interfaces/Car";
+import {CarData, CarId} from "../../../../back/src/interfaces/Car";
 
 
 export interface State {
-	current?: string,
-	cars: {
-		[key: string]: CarData
-	}
+	current?: CarId,
+	cars: Cars
 }
 
 
 const initialState: State = {
 	current: initCar,
-	cars: {}
+	cars: new window.Map<CarId, CarData>()
 };
+
+export type Cars = Map<CarId, CarData>;
 
 export const reducer = createReducer<State>(initialState, builder => {
 
 	builder.addCase(addCar, (state, action) => {
-		state.cars[action.payload.id as string] = action.payload
+		state.cars.set(action.payload.id, action.payload)
 	});
 
 	builder.addCase(setCar, (state, action) => {

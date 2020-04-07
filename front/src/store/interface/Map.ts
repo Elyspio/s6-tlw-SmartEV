@@ -1,4 +1,4 @@
-import {LatLngExpression, LatLngLiteral} from "leaflet";
+import {LatLngLiteral} from "leaflet";
 import {Poi} from "../../../../back/src/interfaces/Poi";
 
 export interface Marker {
@@ -19,9 +19,7 @@ export  type BoundingBox = {
 
 export interface State {
 	zoom: number,
-	position: LatLngLiteral,
 	pois: Poi[]
-	boundingBox: BoundingBox | null,
 	customMarker: Marker[]
 }
 

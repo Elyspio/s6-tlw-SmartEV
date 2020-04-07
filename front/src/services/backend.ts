@@ -1,7 +1,6 @@
 import {baseUrl} from "../constants/Server";
-import {CarData, CarId} from "../../../back/src/interfaces/Car";
+import {CarData} from "../../../back/src/interfaces/Car";
 import {LatLngLiteral} from "leaflet";
-import {Journey} from "../../../back/src/interfaces/Journey";
 
 
 export class Backend {
@@ -32,8 +31,6 @@ export class Backend {
 			throw  e;
 		}
 	}
-
-
 
 
 	static async ping(): Promise<boolean> {

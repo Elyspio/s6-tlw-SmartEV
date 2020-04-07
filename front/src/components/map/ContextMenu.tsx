@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Paper} from "@material-ui/core";
+import {Button, IconButton, Paper} from "@material-ui/core";
 import {ContextMenuData} from "./Map";
 import './ContextMenu.css'
 import {Directions, Place} from "@material-ui/icons";
@@ -15,14 +15,21 @@ import {
 import {TravelPoint} from "../../store/reducer/Travel";
 import {CarData, CarId} from "../../../../back/src/interfaces/Car";
 import {setDestMarker, setStartMarker} from "../../store/action/Map";
-
+import Typography from "@material-ui/core/Typography";
+import {setCar} from "../../store/action/Car";
+import {Cars} from "../../store/reducer/Car";
+import SvgIcon from "@material-ui/core/SvgIcon";
+import teslaLogo from '../../../public/assets/cars/logo.tesla.svg'
 
 interface StateProps {
 	travel: {
 		start?: TravelPoint,
 		dest?: TravelPoint
 	},
-	car: CarData
+	car: {
+		current?: CarData,
+		all: Cars
+	}
 }
 
 interface DispatchProps {
@@ -37,7 +44,11 @@ const mapStateToProps = (state: StoreState) => {
 			start: state.travel.startPoint,
 			dest: state.travel.destPoint
 		},
-		car: state.car.cars[state.car.current as string]
+		car: {
+			current: state.car.cars.get(state.car.current as CarId),
+			all: state.car.cars
+		},
+
 	}
 };
 const mapDispatchToProps = (dispatch: Function) => {
@@ -52,7 +63,9 @@ const mapDispatchToProps = (dispatch: Function) => {
 		},
 		getTravel: (start: LatLngLiteral, dest: LatLngLiteral, car: CarId) => {
 			dispatch(getTravelSteps(start, dest, car))
-		}
+		},
+		setCurrentCar: (id: CarId) => dispatch(setCar(id))
+
 	}
 };
 
@@ -75,45 +88,67 @@ class ContextMenu extends Component<Props> {
 			       id={"MenuContextMenu"}
 			       onContextMenu={this.doNothing}
 			>
-				<Button onContextMenu={this.doNothing} size={"small"}
-				        onClick={() => this.setPoint(geoPos, MarkerType.startPoint)}>
-					<div className={"context-menu-label"}>
-						<Place/>
-						Partir d'ici
+				<Paper className={"category"} id={"ctx-direction"}>
+					<Typography className={"label"}>
+						Direction
+					</Typography>
+					<Button onContextMenu={this.doNothing} size={"small"}
+					        onClick={() => this.setPoint(geoPos, MarkerType.startPoint)}>
+						<div className={"item"}>
+							<Place/>
+							Partir d'ici
+						</div>
+					</Button>
+					<Button onContextMenu={this.doNothing} size={"small"}
+					        onClick={() => this.setPoint(geoPos, MarkerType.destPoint)}>
+						<div className={"item"}>
+							<Directions/>
+							Aller ici
+						</div>
+					</Button>
+				</Paper>
+
+				<Paper className={"category"} id={"ctx-car"}>
+					<Typography className={"item label"}>
+						Voiture
+					</Typography>
+					<div onContextMenu={this.doNothing}
+					     onClick={() => this.setPoint(geoPos, MarkerType.startPoint)}>
+						<div className={"item"}>
+							<IconButton  size={"small"}><img src={"/assets/cars/logo.tesla.svg"} alt={"icon de la marque Tesla"}/></IconButton>
+							<IconButton size={"small"}><img alt={"icon de la marque Renault"} src={"/assets/cars/logo.renault.png"}/></IconButton>
+						</div>
+
 					</div>
-				</Button>
-				<Button onContextMenu={this.doNothing} size={"small"}
-				        onClick={() => this.setPoint(geoPos, MarkerType.destPoint)}>
-					<div className={"context-menu-label"}>
-						<Directions/>
-						Aller ici
-					</div>
-				</Button>
+
+				</Paper>
+
 			</Paper>
 
 		);
 	}
 
 	private setPoint = (geoPos: LatLngLiteral, markerType: MarkerType) => {
-		const point: TravelPoint = {
-			pos: {lng: geoPos.lng, lat: geoPos.lat}
-		}
 
-		console.log("ctx", this.props);
+		if (this.props.car.current?.id) {
+			const point: TravelPoint = {
+				pos: {lng: geoPos.lng, lat: geoPos.lat}
+			}
 
-		switch (markerType) {
-			case MarkerType.startPoint:
-				this.props.setStartPoint(point)
-				if (this.props.travel.dest) {
-					this.props.getTravel(point.pos, this.props.travel.dest.pos, this.props.car.id as CarId)
-				}
-				break;
-			case MarkerType.destPoint:
-				this.props.setDestPoint(point)
-				if (this.props.travel.start) {
-					this.props.getTravel(this.props.travel.start.pos, point.pos, this.props.car.id as CarId)
-				}
-				break;
+			switch (markerType) {
+				case MarkerType.startPoint:
+					this.props.setStartPoint(point)
+					if (this.props.travel.dest) {
+						this.props.getTravel(point.pos, this.props.travel.dest.pos, this.props.car.current.id)
+					}
+					break;
+				case MarkerType.destPoint:
+					this.props.setDestPoint(point)
+					if (this.props.travel.start) {
+						this.props.getTravel(this.props.travel.start.pos, point.pos, this.props.car.current.id)
+					}
+					break;
+			}
 		}
 
 		setTimeout(this.props.closeModal, 300);

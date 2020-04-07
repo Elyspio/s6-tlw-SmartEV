@@ -15,11 +15,9 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import {Poi} from "../../../../back/src/interfaces/Poi";
 import {StoreState} from "../../store/reducer";
-import {Dispatch} from "redux";
 import {
-	changeMarkerPos, ChangeMarkerPosFn,
-	changePosition,
-	setBoundingBox,
+	changeMarkerPos,
+	ChangeMarkerPosFn,
 	setPois
 } from "../../store/action/Map";
 import {connect} from "react-redux";
@@ -32,8 +30,7 @@ import {MarkerFactory} from "./leaflet/MarkerFactory";
 import {init as defaultPosition} from "../../constants/map"
 import * as Logger from "../../services/Logger";
 import {getTravelSteps} from "../../store/action/Travel";
-import {TravelPoint} from "../../store/reducer/Travel";
-import {CarData, CarId} from "../../../../back/src/interfaces/Car";
+import {CarId} from "../../../../back/src/interfaces/Car";
 
 export type ContextMenuData = {
 	screenPos: {
@@ -50,7 +47,6 @@ export type ContextMenuData = {
 type StoreProps = {
 	zoomLevel: number,
 	carId?: string;
-	mapPosition: LatLngExpression,
 	pois: Poi[],
 	customMarkers: Marker[],
 	geoJson?: GeoJSON.LineString
@@ -60,7 +56,6 @@ const mapStateToProps = (store: StoreState) => {
 	return {
 		zoomLevel: store.map.zoom,
 		carId: store.car.current,
-		mapPosition: store.map.position,
 		pois: store.map.pois,
 		customMarkers: store.map.customMarker,
 		geoJson: store.travel.journey?.routes[0].geometry
@@ -68,9 +63,7 @@ const mapStateToProps = (store: StoreState) => {
 }
 
 type DispatchProps = {
-	changeMapPosition: Function,
 	setPois: Function,
-	setBoundingBox: Function,
 	changeMarkerPos: ({newPos, oldPos}: { newPos: LatLngLiteral, oldPos: LatLngLiteral }) => void,
 	getTravel: (start: LatLngLiteral, dest: LatLngLiteral, car: CarId) => void
 }
@@ -79,14 +72,8 @@ type Props = DispatchProps & StoreProps & {}
 
 const mapDispatchToProps = (dispatch: Function) => {
 	return {
-		changeMapPosition: (position: LatLngLiteral) => {
-			dispatch(changePosition(position))
-		},
 		setPois: (pois: Poi[]) => {
 			dispatch(setPois(pois))
-		},
-		setBoundingBox: (boundingBox: BoundingBox) => {
-			dispatch(setBoundingBox(boundingBox))
 		},
 		changeMarkerPos: ({newPos, oldPos}: ChangeMarkerPosFn) => {
 			dispatch(changeMarkerPos({newPos, oldPos}))
@@ -265,8 +252,9 @@ class CustomMap extends Component<Props, State> {
 				this.travelMarkers.addLayer(this.createCustomMarker(MarkerType.destPoint, dest));
 			}
 
-			if(start && dest && this.state.car.id) {
+			if (start && dest && this.state.car.id) {
 				this.props.getTravel(start.pos, dest.pos, this.state.car.id as CarId);
+				this.removeGeoJson();
 			}
 
 			this.map?.addLayer(this.travelMarkers);
@@ -281,12 +269,17 @@ class CustomMap extends Component<Props, State> {
 		return m;
 	}
 
-	private refreshGeoJson() {
-		console.log(this.props);
+	private removeGeoJson() {
 		if (this.props.geoJson) {
 			if (this.geoJsonLayer) {
 				this.map?.removeLayer(this.geoJsonLayer);
 			}
+		}
+	}
+
+	private refreshGeoJson() {
+		if (this.props.geoJson) {
+			this.removeGeoJson();
 			this.geoJsonLayer = new L.GeoJSON(this.props.geoJson as any);
 			this.map?.addLayer(this.geoJsonLayer);
 		}

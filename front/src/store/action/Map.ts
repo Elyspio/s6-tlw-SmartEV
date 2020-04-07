@@ -1,18 +1,10 @@
-import {
-	createAction as _createAction,
-	PayloadAction,
-	PrepareAction
-} from '@reduxjs/toolkit'
-import {LatLngExpression, LatLngLiteral} from "leaflet";
+import {createAction as _createAction} from '@reduxjs/toolkit'
+import {LatLngLiteral} from "leaflet";
 import {Poi} from "../../../../back/src/interfaces/Poi";
 import {BoundingBox, Marker} from "../interface/Map";
 
 
 const createAction = <P>(name: string) => _createAction<P>(`map/${name}`);
-
-export const changeZoomLevel = createAction<number>("changeZoomLevel");
-
-export const changePosition = createAction<LatLngLiteral>("changePosition");
 
 export const setPois = createAction<Poi[]>("setPois")
 export const setBoundingBox = createAction<BoundingBox>("setBoundingBox")
