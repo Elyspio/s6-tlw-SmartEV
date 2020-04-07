@@ -1,23 +1,23 @@
 {
-  "compilerOptions": {
-    "target": "ES5",
-    "moduleResolution": "Node",
-    "sourceMap": true,
-    "outDir": "build",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "lib": [
-      "ESNext",
-      "dom"
-    ]
-  },
-  "compileOnSave": true,
-  "exclude": [
-    "node_modules",
-    "build",
-    "dist"
-  ],
-  "include": [
-    "src"
-  ]
+	"compilerOptions": {
+		"target": "ES5",
+		"moduleResolution": "Node",
+		"sourceMap": true,
+		"outDir": "build",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"lib": [
+			"ESNext",
+			"dom"
+		]
+	},
+	"compileOnSave": true,
+	"exclude": [
+		"node_modules",
+		"build",
+		"dist"
+	],
+	"include": [
+		"src"
+	]
 }

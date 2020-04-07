@@ -1,11 +1,11 @@
 {
-  "presets": [
-    [
-      "@babel/env",
-      {
-      }
-    ]
-  ],
-  "plugins": [
-  ]
+	"presets": [
+		[
+			"@babel/env",
+			{
+			}
+		]
+	],
+	"plugins": [
+	]
 }

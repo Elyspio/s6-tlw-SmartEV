@@ -4,7 +4,7 @@ export type CarData = {
 	range: number;
 	maxPower: number;
 	connectors: number[];
-	id?: string; // id is autoflied
+	id: CarId; // id is autoflied
 };
 
 export type CarId = "zoe" | "teslaModel3";
