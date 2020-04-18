@@ -5,6 +5,7 @@
 	"dependencies": {
 		"@material-ui/core": "latest",
 		"@material-ui/icons": "latest",
+		"@material-ui/lab": "^4.0.0-alpha.50",
 		"@reduxjs/toolkit": "latest",
 		"leaflet": "latest",
 		"leaflet.markercluster": "^1.4.1",
@@ -45,7 +46,8 @@
 		"production": [
 			">0.2%",
 			"not dead",
-			"not op_mini all"
+			"not op_mini all",
+			"ie 9"
 		],
 		"development": [
 			"last 1 chrome version",

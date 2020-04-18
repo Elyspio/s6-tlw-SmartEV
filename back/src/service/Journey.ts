@@ -51,6 +51,10 @@ export class JourneyService {
 				return number < remainingAutonomy * JourneyService.offset;
 			});
 
+			if (poi === undefined) {
+				throw new Error("travel is not possible with this car");
+			}
+
 			const last = coordonates.pop();
 			coordonates.push(CoordConverter.openStreetMapToLeaflet(poi.addressInfo));
 			coordonates.push(last);

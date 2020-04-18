@@ -151,6 +151,9 @@ class ContextMenu extends Component<Props> {
 		if (!this.isSelectedCar(id)) {
 			this.props.setCurrentCar(id);
 			this.props.closeModal();
+			if (this.props.travel.start && this.props.travel.dest) {
+				this.props.getTravel(this.props.travel.start.pos, this.props.travel.dest.pos, id)
+			}
 		}
 
 	}

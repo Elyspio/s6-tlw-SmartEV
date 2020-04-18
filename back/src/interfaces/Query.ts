@@ -28,3 +28,9 @@ export interface Coordonate {
 	lng: number;
 	lat: number;
 }
+
+export interface GeocodingQuery extends Request {
+	query: {
+		place: [number, number] | string;
+	};
+}

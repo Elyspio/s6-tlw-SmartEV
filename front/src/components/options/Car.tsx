@@ -2,24 +2,47 @@ import React, {PureComponent} from 'react';
 import {Paper} from "@material-ui/core";
 import {CarData, CarId} from '../../../../back/src/interfaces/Car'
 import './Car.scss'
-import {Dispatch} from "redux";
 import {setCar} from "../../store/action/Car";
 import {connect} from "react-redux";
 import {BatteryChargingFull, Done, LocalGasStation} from "@material-ui/icons";
+import {getTravelSteps} from "../../store/action/Travel";
+import {LatLngLiteral} from "leaflet";
+import {StoreState} from "../../store/reducer";
+import {TravelPoint} from "../../store/reducer/Travel";
 
-type StateProps = {}
+type StateProps = {
+	travel: {
+		start?: TravelPoint,
+		dest?: TravelPoint
+	},
+}
 
 type DispatchProps = {
 	setCurrentCar: Function
+	refreshTravel: Function
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
+const mapStateToProps = (state: StoreState) => {
 	return {
-		setCurrentCar: (id: CarId) => dispatch(setCar(id))
+		travel: {
+			start: state.travel.startPoint,
+			dest: state.travel.destPoint
+		},
 	}
 }
 
-type Props = DispatchProps & {
+const mapDispatchToProps = (dispatch: Function) => {
+	return {
+		setCurrentCar: (id: CarId) => {
+			return dispatch(setCar(id));
+		},
+		refreshTravel: (start: LatLngLiteral, dest: LatLngLiteral, car: CarId) => {
+			dispatch(getTravelSteps(start, dest, car))
+		},
+	}
+}
+
+type Props = DispatchProps & StateProps & {
 	data: CarData,
 	selected?: boolean
 }
@@ -44,7 +67,7 @@ class Car extends PureComponent<Props> {
 		const image = Car.imagePaths[id]
 		return (
 			<Paper className={"Car"}
-			       onClick={() => this.props.setCurrentCar(id as string)}>
+			       onClick={this.setCurrentCar}>
 				<p className={"selected-icon"}>{this.props.selected ?
 					<Done/> : ""}</p>
 
@@ -67,6 +90,13 @@ class Car extends PureComponent<Props> {
 			</Paper>
 		);
 	}
+
+	private setCurrentCar = () => {
+		this.props.setCurrentCar(this.props.data.id);
+		if(this.props.travel.start && this.props.travel.dest) {
+			this.props.refreshTravel(this.props.travel.start.pos, this.props.travel.dest.pos, this.props.data.id);
+		}
+	}
 }
 
-export default connect(null, mapDispatchToProps)(Car) as any;
+export default connect(mapStateToProps, mapDispatchToProps)(Car) as any;

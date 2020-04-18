@@ -1,14 +1,12 @@
 import { Express } from "express";
 import fs from "fs";
 import path from "path";
-import { CarQuery, Coordonate, ItineraireQuery, PoiQuery } from "../interfaces/Query";
-import { default as axios } from "axios";
+import { CarQuery, Coordonate, GeocodingQuery, ItineraireQuery, PoiQuery } from "../interfaces/Query";
 import { cars } from "../data/Car";
 import { CarData } from "../interfaces/Car";
 import { Poi } from "../interfaces/Poi";
-import { coordonateToString, distanceFromPointSquared } from "../util/Helper";
-import { Journey } from "../interfaces/Journey";
 import { JourneyService } from "../service/Journey";
+import { GeocodingService } from "../service/Geocoding";
 
 const cors = require("cors");
 const express = require("express");
@@ -38,80 +36,22 @@ back.get("/travel", async (req: ItineraireQuery, res) => {
 	const compatiblePois = apiCache.filter((poi: Poi) => poi.connections.some((poiCo) => car.connectors.some((carCo) => carCo === poiCo.connectionTypeId)));
 
 	const service = new JourneyService(compatiblePois);
-	const journey = await service.travel(car, ...waypoints);
-	// let url = `https://api.mapbox.com/directions/v5/mapbox/driving/${waypoints
-	// 	.map(coordonateToString)
-	// 	.join(";")}?alternatives=false&geometries=geojson&steps=true&overview=full&access_token=${token}`;
-	// try {
-	// 	let response = await axios.get(url);
-	// 	if (response.data.code !== "Ok") {
-	// 		throw new Error(response.data);
-	// 	}
-	// 	travel = response.data;
-	// } catch (e) {
-	// 	console.error("Error in mapbox call", e);
-	// 	return res.status(500).json({
-	// 		service: "Mapbox",
-	// 		message: JSON.stringify(e)
-	// 	});
-	// }
-	//
-	// console.timeEnd("a");
-	//
-	// const car = cars[req.query.car];
-	// const carRange = car.range * 1000; // get car range in meters instead of kilometers
-	//
-	// while (travel.routes[0].legs[travel.routes[0].legs.length - 1].distance > carRange) {
-	// 	let currentDistance = 0;
-	// 	let currentStep = 0;
-	//
-	// 	while (currentDistance < (carRange * 90) / 100 && currentStep < travel.routes[0].legs[travel.routes[0].legs.length - 1].steps.length) {
-	// 		currentDistance += travel.routes[0].legs[travel.routes[0].legs.length - 1].steps[currentStep].distance;
-	// 		currentStep++;
-	// 	} // get first point to be after 90% of the car's range
-	//
-	// 	currentStep--;
-	//
-	// 	const lastStep = travel.routes[0].legs[travel.routes[0].legs.length - 1].steps[currentStep];
-	//
-	// 	const compatiblePois = apiCache.filter((poi: Poi) => poi.connections.some((poiCo) => car.connectors.some((carCo) => carCo === poiCo.connectionTypeId)));
-	//
-	// 	const chargePointToUse = compatiblePois.reduce((previousPoi, currentPoi, currentIndex) => {
-	// 		const { latitude: latP, longitude: longP } = previousPoi.addressInfo;
-	// 		const { latitude: latC, longitude: longC } = currentPoi.addressInfo;
-	// 		if (distanceFromPointSquared([latP, longP], lastStep.maneuver.location) < distanceFromPointSquared([latC, longC], lastStep.maneuver.location))
-	// 			return previousPoi;
-	// 		return currentPoi;
-	// 	});
-	//
-	// 	const last = waypoints.pop();
-	// 	waypoints.push({
-	// 		lng: chargePointToUse.addressInfo.longitude,
-	// 		lat: chargePointToUse.addressInfo.latitude
-	// 	});
-	// 	waypoints.push(last);
-	//
-	// 	try {
-	// 		url = `https://api.mapbox.com/directions/v5/mapbox/driving/${waypoints
-	// 			.map(coordonateToString)
-	// 			.join(";")}?alternatives=false&geometries=geojson&steps=true&overview=full&access_token=${token}`;
-	// 		console.log("url", url);
-	// 		let response = await axios.get(url);
-	// 		if (response.data.code !== "Ok") {
-	// 			throw new Error(response.data);
-	// 		}
-	// 		travel = response.data;
-	// 		console.log("Routes", travel);
-	// 	} catch (e) {
-	// 		console.error("Error in mapbox call", e);
-	// 		return res.status(500).json({
-	// 			service: "Mapbox",
-	// 			message: JSON.stringify(e)
-	// 		});
-	// 	}
-	// }
+	try {
+		const journey = await service.travel(car, ...waypoints);
+		return res.json(journey);
+	} catch (e) {
+		return res.status(422).json({ type: "travel error", message: "could not find a travel" });
+	}
+});
 
-	return res.json(journey);
+back.get("/geocoding", async (req: GeocodingQuery, res) => {
+	const service = new GeocodingService();
+
+	if ((req.query.place as string).startsWith("[")) {
+		req.query.place = JSON.parse(req.query.place.toString());
+	}
+
+	res.send(JSON.stringify({ result: await service.convert(req.query.place) }));
 });
 
 back.get("/car", (req: CarQuery, res) => {

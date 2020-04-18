@@ -31,6 +31,8 @@ import {init as defaultPosition} from "../../constants/map"
 import * as Logger from "../../services/Logger";
 import {getTravelSteps} from "../../store/action/Travel";
 import {CarId} from "../../../../back/src/interfaces/Car";
+import {Snackbar} from "@material-ui/core";
+import Alert from '@material-ui/lab/Alert';
 
 export type ContextMenuData = {
 	screenPos: {
@@ -49,16 +51,24 @@ type StoreProps = {
 	carId?: string;
 	pois: Poi[],
 	customMarkers: Marker[],
-	geoJson?: GeoJSON.LineString
+	geoJson?: GeoJSON.LineString | Error
 }
 
 const mapStateToProps = (store: StoreState) => {
+
+
+	let geoJson;
+	if (store.travel.journey?.routes) {
+		geoJson = store.travel.journey?.routes[0].geometry;
+	} else {
+		geoJson = new Error("Could not find a travel for this waitpoints")
+	}
 	return {
 		zoomLevel: store.map.zoom,
 		carId: store.car.current,
 		pois: store.map.pois,
 		customMarkers: store.map.customMarker,
-		geoJson: store.travel.journey?.routes[0].geometry
+		geoJson: geoJson
 	}
 }
 
@@ -99,14 +109,16 @@ type State = {
 		id?: string,
 	},
 	travel?: {
-		polyline: GeoJSON.LineString
+		polyline?: GeoJSON.LineString,
+		error: boolean
 	},
 	refresh: {
 		car: boolean,
 		pois: boolean,
 		customMarkers: boolean,
 		polyline: boolean
-	}
+	},
+
 }
 
 class CustomMap extends Component<Props, State> {
@@ -141,13 +153,24 @@ class CustomMap extends Component<Props, State> {
 
 		logger.log("refresh", reloadCustomMarker);
 		logger.end();
+
+
+		let polyline
+
+		if (props.geoJson instanceof Error) {
+			polyline = false;
+		} else {
+			polyline = state.travel?.polyline?.coordinates.length !== props.geoJson?.coordinates.length || false;
+
+		}
+
 		return {
 			...state,
 			refresh: {
 				car: props.carId !== state.car?.id,
 				pois: stateMarkers.pois.length !== props.pois.length,
 				customMarkers: reloadCustomMarker,
-				polyline: state.travel?.polyline.coordinates.length !== props.geoJson?.coordinates.length || false
+				polyline: polyline
 			},
 			car: {
 				id: props.carId,
@@ -170,7 +193,16 @@ class CustomMap extends Component<Props, State> {
 
 	public async componentDidUpdate(props: Props) {
 
-		console.log("componentDidUpdate", props);
+		console.log("componentDidUpdate", props, this.state);
+		if(!this.state.travel?.error && props.customMarkers.length === 2 && props.geoJson instanceof Error) {
+			this.setState(prev => ({
+				...prev,
+				travel: {
+					...prev.travel,
+					error: true,
+				}
+			}))
+		}
 		await this.refresh()
 
 
@@ -203,9 +235,24 @@ class CustomMap extends Component<Props, State> {
 				<div id={"leaflet"}>
 				</div>
 				{contextPopup}
+				<Snackbar open={this.state.travel?.error && this.props.geoJson instanceof Error} autoHideDuration={6000} onClose={this.handleClose}>
+					<Alert onClose={this.handleClose} severity="error">
+						Aucun chemin n'a été trouvé pour ce trajet
+					</Alert>
+				</Snackbar>
 			</div>
 
 		);
+	}
+
+	private handleClose = () => {
+		this.setState(prev => ({
+			...prev,
+			travel: {
+				...prev.travel,
+				error: false,
+			}
+		}))
 	}
 
 	private async refresh() {

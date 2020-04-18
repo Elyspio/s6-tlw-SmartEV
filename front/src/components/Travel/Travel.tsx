@@ -9,9 +9,8 @@ import Typography from "@material-ui/core/Typography";
 import {default as StepComponent} from './Step'
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import Waitpoints from "./Waitpoints";
 import IconButton from "@material-ui/core/IconButton";
-import {DriveEta} from "@material-ui/icons";
+import DirectionsIcon from '@material-ui/icons/Directions';
 
 interface StateProps {
 	steps?: Step[],
@@ -26,11 +25,12 @@ interface DispatchProps {
 }
 
 const mapStateToProps = (state: StoreState) => {
-	const travel = state.travel.journey?.routes[0];
 
-	if (!travel) {
+	if (!state.travel.journey?.routes || !state.travel.journey?.routes[0]) {
 		return {};
 	}
+
+	let travel = state.travel.journey?.routes[0];
 
 	const steps: Step[] = [];
 	travel?.legs.forEach(leg => steps.push(...leg.steps));
@@ -63,6 +63,15 @@ class Travel extends Component<Props, State> {
 	}
 
 
+	static getDerivedStateFromProps(props: Props, state: State): State | null {
+		if (props.steps && !state.open) {
+			return {
+				open: true
+			}
+		}
+		return null;
+	}
+
 	render() {
 
 		let journeyData = null;
@@ -70,13 +79,12 @@ class Travel extends Component<Props, State> {
 
 		let comp;
 
-		if(!this.state.open) {
-			comp = <IconButton onClick={() => this.setState({open: true})}>
-				<DriveEta fontSize={"large"}/>
+		if (!this.state.open) {
+			comp = <IconButton
+				onClick={() => this.setState({open: !!this.props.steps})}>
+				<DirectionsIcon fontSize={"large"}/>
 			</IconButton>
-		}
-
-		else {
+		} else {
 			if (this.props.total && this.props.steps) {
 				const time = JourneyService.splitTime(this.props.total.duration)
 				console.log("time", time);
@@ -109,7 +117,6 @@ class Travel extends Component<Props, State> {
 				</List>
 
 
-
 			}
 
 			comp = <>
@@ -117,7 +124,7 @@ class Travel extends Component<Props, State> {
 					<Typography style={{textAlign: "center"}}
 					            variant={"h6"}>Votre trajet</Typography>
 
-					<Waitpoints/>
+					{/*<Waitpoints/>*/}
 					{journeyData}
 				</div>
 				{journeySteps}
@@ -126,14 +133,12 @@ class Travel extends Component<Props, State> {
 		}
 
 
+		const className: string = (this.state.open ? "Travel" : "Travel-btn");
+		console.log("I", className);
+		return this.state.open
+			? <Paper className={className}>{comp}</Paper>
+			: <div className={className}>{comp}</div>
 
-
-
-		return (
-			<Paper className={"Travel"}>
-				{comp}
-			</Paper>
-		);
 
 	}
 
