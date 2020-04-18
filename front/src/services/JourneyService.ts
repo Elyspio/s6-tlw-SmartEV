@@ -17,6 +17,34 @@ export class JourneyService {
 
 	}
 
+	public static splitTime(duration: number): { hours: number, minutes: number, seconds: number } {
+
+		const h = Math.floor(duration / 3600);
+		duration %= 3600;
+		const mn = duration / 60;
+		duration %= 60;
+		const s = duration;
+
+		return {
+			hours: h,
+			minutes: mn,
+			seconds: s
+		}
+	}
+
+	public static splitDistance(distance: number): { km: number, m: number } {
+
+		const km = Math.floor(distance / 1000);
+		distance %= 1000;
+		const m = distance;
+
+		return {
+			km: km,
+			m: m
+		}
+	}
+
+
 }
 
 

@@ -3,11 +3,11 @@ import { Journey, Step } from "../interfaces/Journey";
 import { Poi } from "../interfaces/Poi";
 import { default as axios } from "axios";
 import { CarData } from "../interfaces/Car";
-import { distanceFromPoint, CoordConverter } from "../util/Helper";
+import { CoordConverter, distanceFromPoint } from "../util/Helper";
 
 export class JourneyService {
-	private static readonly token = "pk.eyJ1Ijoic21hcnRldiIsImEiOiJjazZ1d2ViaTIwZDVpM2ltczNpcTJrZG1mIn0.LEob5CaIG6lgwGGXS4kN-w";
-	private static readonly offset = 0.7;
+	public static readonly token = "pk.eyJ1Ijoic21hcnRldiIsImEiOiJjazZ1d2ViaTIwZDVpM2ltczNpcTJrZG1mIn0.LEob5CaIG6lgwGGXS4kN-w";
+	private static readonly offset = 0.95;
 	private pois: Poi[];
 
 	constructor(pois: Poi[]) {
@@ -27,19 +27,28 @@ export class JourneyService {
 			// console.log(`Distance ${distance} km > ${maxRange} km`);
 			// console.log("trying to get a charging station");
 
-			const lastStep = lastLegSteps.reduceRight((current, next, currentIndex) => {
-				return this.getLenghtFromSteps(currentIndex, lastLegSteps) > maxRange ? next : current;
-			});
-			let cost = this.getLenghtFromSteps(lastStep, lastLegSteps);
+			const arr = [...lastLegSteps];
+			let lastStep;
+			for (let i = arr.length - 1; i > 0; i--) {
+				if (this.getLenghtFromSteps(i, arr) < maxRange) {
+					lastStep = arr[i];
+					break;
+				}
+			}
+
+			// const lastStep = lastLegSteps.reduceRight((current, next, currentIndex) => {
+			// 	return this.getLenghtFromSteps(currentIndex, lastLegSteps) > maxRange ? next : current;
+			// });
+			const cost = this.getLenghtFromSteps(lastStep, lastLegSteps);
 			const remainingAutonomy = car.range - cost;
 			console.log("Remaning autonomy: ", car.range, cost, remainingAutonomy);
 			const poi = this.pois.find((p) => {
-				let number = distanceFromPoint(
+				const number = distanceFromPoint(
 					CoordConverter.mapboxToLeaflet(lastStep.maneuver.location),
 					CoordConverter.openStreetMapToLeaflet(p.addressInfo)
 				);
 				// console.log("distance from point (in km)", number, remainingAutonomy);
-				return number < remainingAutonomy;
+				return number < remainingAutonomy * JourneyService.offset;
 			});
 
 			const last = coordonates.pop();
@@ -60,17 +69,31 @@ export class JourneyService {
 			i = index;
 		}
 
-		let slice = steps.slice(0, i);
+		const slice = steps.slice(0, i);
 
-		let map = slice.map((s) => s.distance);
-		let reduce = map.reduce((a, b) => a + b, 0) / 1000;
+		const map = slice.map((s) => s.distance);
+		const reduce = map.reduce((a, b) => a + b) / 1000;
 
 		return reduce;
 	}
 
 	private fetchMapbox(waitpoints: Coordonate[]): Promise<Journey> {
 		const waitPointStr = waitpoints.map(this.coordonateToString).join(";");
-		let url = `https://api.mapbox.com/directions/v5/mapbox/driving/${waitPointStr}?alternatives=false&geometries=geojson&steps=true&overview=full&access_token=${JourneyService.token}`;
+
+		const options = {
+			alternatives: false,
+			geometries: "geojson",
+			steps: true,
+			overview: "full",
+			access_token: JourneyService.token,
+			language: "fr"
+		};
+
+		const optionsStr = Object.keys(options)
+			.map((key) => `${key}=${options[key]}`)
+			.join("&");
+
+		const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${waitPointStr}?${optionsStr}`;
 		console.log("fetchMapbox", url);
 		return axios.get(url).then((raw) => raw.data);
 	}

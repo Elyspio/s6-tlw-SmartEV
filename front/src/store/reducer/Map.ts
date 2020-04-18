@@ -6,7 +6,6 @@ import {
 	addCustomMarker,
 	changeMarkerPos,
 	removeCustomMarker,
-	setBoundingBox,
 	setDestMarker,
 	setPois,
 	setStartMarker

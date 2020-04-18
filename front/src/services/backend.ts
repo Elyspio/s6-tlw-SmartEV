@@ -32,14 +32,18 @@ export class Backend {
 		}
 	}
 
-
-	static async ping(): Promise<boolean> {
+	public static async ping(): Promise<boolean> {
 		try {
 			await fetch(baseUrl)
 			return true;
 		} catch (e) {
 			return false;
 		}
+	}
+
+	public static async geocode(place: string | [number, number]) {
+		let strPlace = typeof place === "string" ? place : JSON.stringify(place);
+		return fetch(`${baseUrl}geocoding?place=${strPlace}`).then(x => x.json())
 	}
 
 	public static encodeQueryData(data: { [key: string]: any }) {

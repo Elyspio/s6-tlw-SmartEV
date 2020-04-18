@@ -1,4 +1,4 @@
-import { LatLngLiteral, LatLngTuple, layerGroup } from "leaflet";
+import { LatLngLiteral, LatLngTuple } from "leaflet";
 import { Coordonate } from "../interfaces/Query";
 
 export namespace CoordConverter {

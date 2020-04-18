@@ -6,7 +6,7 @@ import {LatLngLiteral} from "leaflet";
 import {JourneyService} from "../../services/JourneyService";
 
 
-const createAction = <P>(name: string) => _createAction<P>(`car/${name}`);
+const createAction = <P>(name: string) => _createAction<P>(`travel/${name}`);
 
 export const setStartPoint = createAction<TravelPoint>("setStartPoint");
 export const setDestPoint = createAction<TravelPoint>("setDestPoint");

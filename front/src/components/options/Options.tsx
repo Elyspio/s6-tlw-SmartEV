@@ -9,6 +9,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Modal from "./Modal";
 import {Paper, Typography} from "@material-ui/core";
 import {Cars} from "../../store/reducer/Car";
+import * as Logger from "../../services/Logger"
 
 const mapStateToProps = (store: StoreState) => {
 	return {
@@ -39,9 +40,24 @@ class Options extends Component<Props, State> {
 
 	constructor(props: Props) {
 		super(props);
+
+		console.log("Options constructor", props);
+
 		this.state = {
 			open: props.selected === undefined
 		}
+	}
+
+	componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
+		const l = new Logger.Function("option did update");
+		l.log(JSON.parse(JSON.stringify({prevProps, prevState, snapshot})));
+		if (prevProps.selected && prevState.open) {
+			l.log("close the modal");
+			this.setState({
+				open: false
+			})
+		}
+		l.end();
 	}
 
 	render() {
@@ -69,7 +85,7 @@ class Options extends Component<Props, State> {
 					<Paper
 						className={"container"}
 						elevation={5}
-						style={{}}>
+					>
 						<Typography className={"header"} variant={"h3"}>Quelle
 							est votre voiture ?</Typography>
 						<div id={"cars"}>

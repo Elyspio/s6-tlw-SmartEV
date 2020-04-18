@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, IconButton, Paper} from "@material-ui/core";
+import {Button, Paper} from "@material-ui/core";
 import {ContextMenuData} from "./Map";
 import './ContextMenu.css'
 import {Directions, Place} from "@material-ui/icons";
@@ -18,8 +18,6 @@ import {setDestMarker, setStartMarker} from "../../store/action/Map";
 import Typography from "@material-ui/core/Typography";
 import {setCar} from "../../store/action/Car";
 import {Cars} from "../../store/reducer/Car";
-import SvgIcon from "@material-ui/core/SvgIcon";
-import teslaLogo from '../../../public/assets/cars/logo.tesla.svg'
 
 interface StateProps {
 	travel: {
@@ -35,7 +33,8 @@ interface StateProps {
 interface DispatchProps {
 	setDestPoint: (marker: TravelPoint) => void,
 	setStartPoint: (marker: TravelPoint) => void,
-	getTravel: (start: LatLngLiteral, dest: LatLngLiteral, car: CarId) => void
+	getTravel: (start: LatLngLiteral, dest: LatLngLiteral, car: CarId) => void,
+	setCurrentCar: (id: CarId) => void
 }
 
 const mapStateToProps = (state: StoreState) => {
@@ -82,7 +81,10 @@ class ContextMenu extends Component<Props> {
 	render() {
 
 		const {screenPos, geoPos} = this.props.data as ContextMenuData
-
+		const isSelected = new Map<CarId, boolean>();
+		this.props.car.all.forEach(value => {
+			isSelected.set(value.id, this.isSelectedCar(value.id));
+		})
 		return (
 			<Paper style={{top: screenPos.y, left: screenPos.x}}
 			       id={"MenuContextMenu"}
@@ -108,24 +110,49 @@ class ContextMenu extends Component<Props> {
 					</Button>
 				</Paper>
 
-				<Paper className={"category"} id={"ctx-car"}>
+				<Paper className={"category"} id={"ctx-car"}
+				       onContextMenu={this.doNothing}>
 					<Typography className={"item label"}>
 						Voiture
 					</Typography>
-					<div onContextMenu={this.doNothing}
-					     onClick={() => this.setPoint(geoPos, MarkerType.startPoint)}>
-						<div className={"item"}>
-							<IconButton  size={"small"}><img src={"/assets/cars/logo.tesla.svg"} alt={"icon de la marque Tesla"}/></IconButton>
-							<IconButton size={"small"}><img alt={"icon de la marque Renault"} src={"/assets/cars/logo.renault.png"}/></IconButton>
+					<Button size={"small"}
+					        disabled={isSelected.get("teslaModel3")}
+					        className={isSelected.get("teslaModel3") ? "selected" : ""}
+					        onClick={() => this.setCurrentCar("teslaModel3")}>
+						<div className={"item "}>
+							<img
+								src={"/assets/cars/logo.tesla.svg"}
+								alt={"icon de la marque Tesla"}/>
+							Model 3
 						</div>
-
-					</div>
-
+					</Button>
+					<Button size={"small"}
+					        disabled={isSelected.get("zoe")}
+					        className={isSelected.get("zoe") ? "selected" : ""}
+					        onClick={() => this.setCurrentCar("zoe")}>
+						<div className={"item"}>
+							<img
+								alt={"icon de la marque Renault"}
+								src={"/assets/cars/logo.renault.png"}/>
+							Zoé
+						</div>
+					</Button>
 				</Paper>
 
 			</Paper>
 
 		);
+	}
+
+	private isSelectedCar = (id: CarId) => this.props.car.current?.id === id
+
+	private setCurrentCar = (id: CarId) => {
+
+		if (!this.isSelectedCar(id)) {
+			this.props.setCurrentCar(id);
+			this.props.closeModal();
+		}
+
 	}
 
 	private setPoint = (geoPos: LatLngLiteral, markerType: MarkerType) => {

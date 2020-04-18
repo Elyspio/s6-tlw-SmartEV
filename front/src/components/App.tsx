@@ -9,10 +9,11 @@ import {StoreState} from "../store/reducer";
 import {Backend} from "../services/backend";
 import * as Error from "./errors"
 import {Paper} from "@material-ui/core";
+import Travel from "./Travel/Travel";
 
 type StateProps = {
-	location: string,
-	currentCar?: string
+	currentCar?: string,
+	nbCars: number
 }
 
 type State = {
@@ -39,11 +40,14 @@ class App extends React.Component<Props, State> {
 
 	render() {
 
+		const areCarLoaded: boolean = this.props.nbCars === cars.length
+
 		const app = <>
 			<div id={"content"}>
 				<CustomMap/>
 			</div>
-			<Options/>
+			{areCarLoaded ? <Options/> : null}
+			<Travel/>
 		</>
 
 
@@ -52,8 +56,6 @@ class App extends React.Component<Props, State> {
 				<Error.ServerNotFound fn={this.checkServer} timer={1000}/>}
 		</div>;
 		return (
-
-
 			<Paper className="App">
 				{this.state.serverIsOk ? app : error}
 			</Paper>
@@ -63,16 +65,17 @@ class App extends React.Component<Props, State> {
 	private checkServer = async () => {
 		const serverIsOk = await Backend.ping();
 		if (serverIsOk) {
-			this.props.getCars();
-			this.props.setDefaultCar();
+			await this.props.getCars();
+			await this.props.setDefaultCar();
 		}
 		this.setState({serverIsOk})
 	}
 }
 
-const mapStateToProps = (state: StoreState) => {
+const mapStateToProps = (state: StoreState): StateProps => {
 	return {
-		currentCar: state.car.current
+		currentCar: state.car.current,
+		nbCars: state.car.cars.size
 	}
 };
 const mapDispatchToProps = (dispatch: Function) => {

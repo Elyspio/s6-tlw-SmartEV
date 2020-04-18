@@ -60,6 +60,7 @@ export interface Step {
 		type: ManeuverType;
 		location: LatLngTuple;
 		instruction: string;
+		modifier?: string;
 	};
 	weight: number;
 	geometry: Geometry;

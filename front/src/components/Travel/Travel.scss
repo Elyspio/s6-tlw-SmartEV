@@ -1,0 +1,22 @@
+.Travel {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 1000;
+
+  .Chip {
+    margin-right: 2rem;
+    // width: 10rem;
+  }
+
+
+  #steps {
+    max-height: 70vh;
+    max-width: 20rem;
+    text-overflow: ellipsis;
+    overflow-y: auto;
+  }
+
+}
+
+

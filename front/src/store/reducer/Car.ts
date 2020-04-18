@@ -1,6 +1,6 @@
 import {createReducer} from "@reduxjs/toolkit";
 import {addCar, setCar} from "../action/Car";
-import {init as initCar} from "../../constants/Car";
+import {init as initCar, localStorageKeys} from "../../constants/Car";
 import {CarData, CarId} from "../../../../back/src/interfaces/Car";
 
 
@@ -25,6 +25,9 @@ export const reducer = createReducer<State>(initialState, builder => {
 
 	builder.addCase(setCar, (state, action) => {
 		state.current = action.payload
+		if (action.payload) {
+			localStorage.setItem(localStorageKeys.car, action.payload)
+		}
 	})
 });
 
